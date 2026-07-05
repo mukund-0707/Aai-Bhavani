@@ -1,0 +1,190 @@
+[
+  {
+    "model": "services.service",
+    "pk": 1,
+    "fields": {
+      "title": "Property Consultant",
+      "slug": "property-consultant",
+      "short_description": "Buyer aur Seller ke beech trusted broker. Sirf 2% commission pe apni dream property paaein.",
+      "long_description": "Hum aapko best properties dikhate hain — residential, commercial aur plots. Humara builder network bahut strong hai. Hum sirf 2% commission lete hain deal close hone par. Buyer aur Seller dono ki needs hum samajhte hain.",
+      "icon": "home",
+      "image": "",
+      "banner": "",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2026-07-04T10:00:00Z"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 2,
+    "fields": {
+      "title": "Interior Design",
+      "slug": "interior-design",
+      "short_description": "Aapke ghar ya office ko beautiful aur functional banate hain. Budget mein best design.",
+      "long_description": "Hum residential aur commercial interior design karte hain. Kitchen, bedroom, living room, office — sab kuch. 3D design, material selection aur execution sab included hai. Aapka budget aur taste dono ka khayal rakhte hain.",
+      "icon": "palette",
+      "image": "",
+      "banner": "",
+      "order": 2,
+      "is_active": true,
+      "created_at": "2026-07-04T10:00:00Z"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 3,
+    "fields": {
+      "title": "Digital Marketing",
+      "slug": "digital-marketing",
+      "short_description": "Aapke business ki online presence badhate hain. Social media, SEO aur paid ads.",
+      "long_description": "Hum aapke business ko online grow karne mein help karte hain. Social media management, SEO, Google Ads, Facebook Ads — sab kuch. Monthly reports aur transparent results. Aapka business badhega, guaranteed.",
+      "icon": "trending-up",
+      "image": "",
+      "banner": "",
+      "order": 3,
+      "is_active": true,
+      "created_at": "2026-07-04T10:00:00Z"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 4,
+    "fields": {
+      "title": "Referral Program",
+      "slug": "referral-program",
+      "short_description": "Client laao aur hamara 50% profit kamao. Jitne zyada referrals utni zyada income.",
+      "long_description": "Hamare referral program mein join karo. Koi bhi genuine client laao — property buyer, seller ya interior design client. Deal close hone par hamara 50% profit tumhara. No limit on referrals, no limit on income.",
+      "icon": "users",
+      "image": "",
+      "banner": "",
+      "order": 4,
+      "is_active": true,
+      "created_at": "2026-07-04T10:00:00Z"
+    }
+  },
+  {
+    "model": "services.referralprogram",
+    "pk": 1,
+    "fields": {
+      "title": "Referral Program — 50% Profit Share",
+      "description": "Koi bhi genuine client laao aur hamara 50% profit kamao. Property deal, interior design ya digital marketing — kisi bhi service ke liye client laao. Deal close hone par commission seedha aapke account mein.",
+      "commission_pct": "50.00",
+      "image": "",
+      "steps": [
+        {"step": 1, "text": "Register karein hamare referral program mein"},
+        {"step": 2, "text": "Apne network mein property/interior/marketing clients dhundein"},
+        {"step": 3, "text": "Client ka naam aur number submit karein"},
+        {"step": 4, "text": "Hum client se deal close karein"},
+        {"step": 5, "text": "50% profit aapko milega — seedha aapke account mein"}
+      ],
+      "faq": [
+        {"q": "Commission kab milega?", "a": "Deal officially close hone ke 7 working days ke andar commission transfer ho jayega."},
+        {"q": "Kitne clients refer kar sakte hain?", "a": "Koi limit nahi — jitne chahein utne clients refer karein."},
+        {"q": "Kya referral program free hai?", "a": "Haan, bilkul free hai. Koi registration fee nahi."},
+        {"q": "Commission % fix hai?", "a": "Abhi 50% hai. Kisi bhi change ke liye admin se contact karein."}
+      ],
+      "button_text": "Abhi Join Karein",
+      "button_link": "/referral",
+      "is_active": true,
+      "updated_at": "2026-07-04T10:00:00Z"
+    }
+  },
+  {
+    "model": "faqs.faq",
+    "pk": 1,
+    "fields": {
+      "question": "Property deal mein aap kya commission lete hain?",
+      "answer": "Hum sirf 2% commission lete hain — deal value ka. Koi hidden charges nahi.",
+      "category": "property",
+      "sort_order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "faqs.faq",
+    "pk": 2,
+    "fields": {
+      "question": "Interior design project kitne time mein complete hota hai?",
+      "answer": "Project size ke hisaab se 2-8 weeks lagte hain. Pehle 3D design approval phir execution.",
+      "category": "interior",
+      "sort_order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "faqs.faq",
+    "pk": 3,
+    "fields": {
+      "question": "Referral commission kab milta hai?",
+      "answer": "Deal close hone ke 7 working days ke andar commission seedha aapke account mein transfer ho jata hai.",
+      "category": "referral",
+      "sort_order": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "faqs.faq",
+    "pk": 4,
+    "fields": {
+      "question": "Kya aap Pune ke bahar bhi properties dikhate hain?",
+      "answer": "Abhi hum primarily Pune aur surrounding areas mein kaam karte hain. Future mein expand karenge.",
+      "category": "property",
+      "sort_order": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "faqs.faq",
+    "pk": 5,
+    "fields": {
+      "question": "Digital marketing ke results kitne time mein dikhte hain?",
+      "answer": "SEO mein 3-6 months lagte hain. Paid ads mein pehle hafte se hi results dikhne lagte hain.",
+      "category": "digital",
+      "sort_order": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "testimonials.testimonial",
+    "pk": 1,
+    "fields": {
+      "client_name": "Rajesh Sharma",
+      "photo": "",
+      "rating": 5,
+      "review": "Bahut acchi service! Humari property bahut jaldi sell ho gayi. Team professional hai aur transparent bhi. Commission bhi reasonable hai.",
+      "location": "Pune",
+      "project": "3BHK Sale - Baner",
+      "is_active": true,
+      "order": 1
+    }
+  },
+  {
+    "model": "testimonials.testimonial",
+    "pk": 2,
+    "fields": {
+      "client_name": "Priya Patel",
+      "photo": "",
+      "rating": 5,
+      "review": "Interior design bilkul meri expectation ke anusaar hua. Budget mein rahke bhi itna sundar kaam kar diya. Thank you Aai Bhavani team!",
+      "location": "Kothrud, Pune",
+      "project": "2BHK Interior - Full Home",
+      "is_active": true,
+      "order": 2
+    }
+  },
+  {
+    "model": "testimonials.testimonial",
+    "pk": 3,
+    "fields": {
+      "client_name": "Suresh Desai",
+      "photo": "",
+      "rating": 5,
+      "review": "Referral program se mujhe bahut acchi income ho rahi hai. 3 clients diye aur teeno deals close ho gayi. Commission time pe mila.",
+      "location": "Wakad, Pune",
+      "project": "Referral Commission",
+      "is_active": true,
+      "order": 3
+    }
+  }
+]

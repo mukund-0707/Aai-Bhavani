@@ -1,0 +1,253 @@
+[
+  {
+    "model": "cms.sitesettings",
+    "pk": 1,
+    "fields": {
+      "site_name": "Aai Bhavani Consultant",
+      "site_tagline": "Your Trusted Property & Interior Consultant",
+      "logo": "",
+      "favicon": "",
+      "phone": "+91 98765 43210",
+      "whatsapp": "+91 98765 43210",
+      "email": "info@aaibhavani.com",
+      "address": "Pune, Maharashtra, India",
+      "google_map_url": "",
+      "working_hours": "Mon - Sat: 9:00 AM - 7:00 PM",
+      "facebook_url": "https://facebook.com/aaibhavani",
+      "instagram_url": "https://instagram.com/aaibhavani",
+      "linkedin_url": "",
+      "youtube_url": "",
+      "twitter_url": "",
+      "primary_color": "#C8973B",
+      "secondary_color": "#1A1A2E",
+      "background_color": "#FFFFFF",
+      "font_family": "Inter",
+      "border_radius": "8px",
+      "animation_speed": "0.3s",
+      "updated_at": "2026-07-04T10:00:00Z"
+    }
+  },
+  {
+    "model": "cms.herosection",
+    "pk": 1,
+    "fields": {
+      "title": "Aapka Sapna, Hamari Zimmedari",
+      "subtitle": "Property | Interior Design | Digital Marketing",
+      "description": "Hum aapko best properties dikhate hain, interior design karte hain aur aapke business ki digital marketing karte hain. 2% commission pe property deal karvate hain.",
+      "button_text": "Properties Dekhein",
+      "button_link": "/properties",
+      "button_2_text": "Contact Karein",
+      "button_2_link": "/contact",
+      "desktop_image": "",
+      "mobile_image": "",
+      "overlay_opacity": 0.5,
+      "height": "100vh",
+      "is_active": true,
+      "updated_at": "2026-07-04T10:00:00Z"
+    }
+  },
+  {
+    "model": "cms.pagesection",
+    "pk": 1,
+    "fields": {
+      "page": "home",
+      "section_type": "hero",
+      "order": 1,
+      "is_visible": true,
+      "desktop_settings": {},
+      "tablet_settings": {},
+      "mobile_settings": {}
+    }
+  },
+  {
+    "model": "cms.pagesection",
+    "pk": 2,
+    "fields": {
+      "page": "home",
+      "section_type": "stats",
+      "order": 2,
+      "is_visible": true,
+      "desktop_settings": {},
+      "tablet_settings": {},
+      "mobile_settings": {}
+    }
+  },
+  {
+    "model": "cms.pagesection",
+    "pk": 3,
+    "fields": {
+      "page": "home",
+      "section_type": "services",
+      "order": 3,
+      "is_visible": true,
+      "desktop_settings": {},
+      "tablet_settings": {},
+      "mobile_settings": {}
+    }
+  },
+  {
+    "model": "cms.pagesection",
+    "pk": 4,
+    "fields": {
+      "page": "home",
+      "section_type": "about",
+      "order": 4,
+      "is_visible": true,
+      "desktop_settings": {},
+      "tablet_settings": {},
+      "mobile_settings": {}
+    }
+  },
+  {
+    "model": "cms.pagesection",
+    "pk": 5,
+    "fields": {
+      "page": "home",
+      "section_type": "gallery",
+      "order": 5,
+      "is_visible": true,
+      "desktop_settings": {},
+      "tablet_settings": {},
+      "mobile_settings": {}
+    }
+  },
+  {
+    "model": "cms.pagesection",
+    "pk": 6,
+    "fields": {
+      "page": "home",
+      "section_type": "testimonials",
+      "order": 6,
+      "is_visible": true,
+      "desktop_settings": {},
+      "tablet_settings": {},
+      "mobile_settings": {}
+    }
+  },
+  {
+    "model": "cms.pagesection",
+    "pk": 7,
+    "fields": {
+      "page": "home",
+      "section_type": "referral",
+      "order": 7,
+      "is_visible": true,
+      "desktop_settings": {},
+      "tablet_settings": {},
+      "mobile_settings": {}
+    }
+  },
+  {
+    "model": "cms.pagesection",
+    "pk": 8,
+    "fields": {
+      "page": "home",
+      "section_type": "contact",
+      "order": 8,
+      "is_visible": true,
+      "desktop_settings": {},
+      "tablet_settings": {},
+      "mobile_settings": {}
+    }
+  },
+  {
+    "model": "cms.navigationitem",
+    "pk": 1,
+    "fields": {
+      "label": "Home",
+      "link": "/",
+      "order": 1,
+      "is_visible": true,
+      "open_new_tab": false,
+      "parent": null
+    }
+  },
+  {
+    "model": "cms.navigationitem",
+    "pk": 2,
+    "fields": {
+      "label": "About",
+      "link": "/about",
+      "order": 2,
+      "is_visible": true,
+      "open_new_tab": false,
+      "parent": null
+    }
+  },
+  {
+    "model": "cms.navigationitem",
+    "pk": 3,
+    "fields": {
+      "label": "Services",
+      "link": "/services",
+      "order": 3,
+      "is_visible": true,
+      "open_new_tab": false,
+      "parent": null
+    }
+  },
+  {
+    "model": "cms.navigationitem",
+    "pk": 4,
+    "fields": {
+      "label": "Properties",
+      "link": "/properties",
+      "order": 4,
+      "is_visible": true,
+      "open_new_tab": false,
+      "parent": null
+    }
+  },
+  {
+    "model": "cms.navigationitem",
+    "pk": 5,
+    "fields": {
+      "label": "Gallery",
+      "link": "/gallery",
+      "order": 5,
+      "is_visible": true,
+      "open_new_tab": false,
+      "parent": null
+    }
+  },
+  {
+    "model": "cms.navigationitem",
+    "pk": 6,
+    "fields": {
+      "label": "Contact",
+      "link": "/contact",
+      "order": 6,
+      "is_visible": true,
+      "open_new_tab": false,
+      "parent": null
+    }
+  },
+  {
+    "model": "cms.seosettings",
+    "pk": 1,
+    "fields": {
+      "page": "home",
+      "meta_title": "Aai Bhavani Consultant | Property | Interior | Digital Marketing",
+      "meta_description": "Aai Bhavani Consultant - Pune ki trusted property consultant. Property buying/selling, interior design aur digital marketing services. 2% commission only.",
+      "keywords": "property consultant pune, interior design pune, digital marketing pune, property dealer pune",
+      "og_image": "",
+      "canonical_url": "https://aaibhavani.com",
+      "schema_json": {},
+      "updated_at": "2026-07-04T10:00:00Z"
+    }
+  },
+  {
+    "model": "cms.seosettings",
+    "pk": 2,
+    "fields": {
+      "page": "about",
+      "meta_title": "About Us | Aai Bhavani Consultant",
+      "meta_description": "Aai Bhavani Consultant ke baare mein jaanein. Hum Pune mein property dealing, interior design aur digital marketing services provide karte hain.",
+      "keywords": "about aai bhavani consultant, pune property dealer",
+      "og_image": "",
+      "canonical_url": "https://aaibhavani.com/about",
+      "schema_json": {},
+      "updated_at": "2026-07-04T10:00:00Z"
+    }
+  }
+]
