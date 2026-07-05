@@ -1,60 +1,65 @@
-# Python
+# ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
-*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
 
-# Virtual Environment
-venv/
+# ── Virtual Environment (UV) ──────────────────────────────────────────────────
 .venv/
+venv/
 env/
 ENV/
 
-# Environment Variables
+# ── Environment Variables ─────────────────────────────────────────────────────
 .env
 .env.*
+!.env.example
 
-# Build / Distribution
-build/
-dist/
-*.egg-info/
-
-# Logs
+# ── Django ────────────────────────────────────────────────────────────────────
 *.log
+local_settings.py
+db.sqlite3
+*.db
+media/
+staticfiles/
+static/
+docs/
 
-# Pytest
+# ── UV ────────────────────────────────────────────────────────────────────────
+uv.lock
+
+# ── Testing ───────────────────────────────────────────────────────────────────
 .pytest_cache/
-
-# Coverage
 .coverage
 htmlcov/
 
-# VS Code
-.vscode/
-
-# JetBrains
-.idea/
-
-# OS Files
-.DS_Store
-Thumbs.db
-
-# SQLite
-*.sqlite3
-*.db
-
-# Temporary Files
-temp/
-tmp/
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Node (if frontend exists)
+# ── Next.js / Node ────────────────────────────────────────────────────────────
 node_modules/
+.next/
+out/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
+.vercel
 
-# Generated files
-*.bak
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
 *.swp
+*.bak
+
+# ── Misc ─────────────────────────────────────────────────────────────────────
+temp/
+tmp/
+*.sqlite3
+.ipynb_checkpoints/

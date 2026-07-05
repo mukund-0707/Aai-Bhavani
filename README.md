@@ -1,10 +1,6 @@
 # Aai Bhavani Consultant
 
-Ek CMS-powered website — Django backend + Next.js frontend.
-
-📄 Planning docs:
-- [Backend Plan](BACKEND_PLAN.md)
-- [Website Plan](WEBSITE_PLAN.md)
+CMS-powered website — Django backend + Next.js frontend.
 
 ---
 
@@ -22,10 +18,10 @@ Aai-Bhavani/
 
 ### Prerequisites
 - Python 3.11+
-- UV package manager
+- [UV package manager](https://docs.astral.sh/uv/)
 
-> **PostgreSQL, Cloudinary, Email — dev mein kuch nahi chahiye!**
-> Development mode mein SQLite use hota hai aur sab kuch locally kaam karta hai.
+> **Dev mein kuch extra setup nahi chahiye!**
+> SQLite use hota hai, email console pe print hoti hai, Cloudinary ki zarurat nahi.
 
 ---
 
@@ -43,25 +39,11 @@ cd aai-bhavani-backend
 
 # Virtual environment + dependencies install
 uv sync
-
-# Virtual env activate
-.venv\Scripts\activate          # Windows
-source .venv/bin/activate       # Mac/Linux
 ```
 
-### 3. Migrations run karo (no .env needed!)
+### 3. Migrate karo
 
 ```bash
-uv run python manage.py makemigrations accounts
-uv run python manage.py makemigrations cms
-uv run python manage.py makemigrations services
-uv run python manage.py makemigrations properties
-uv run python manage.py makemigrations gallery
-uv run python manage.py makemigrations testimonials
-uv run python manage.py makemigrations team
-uv run python manage.py makemigrations faqs
-uv run python manage.py makemigrations inquiries
-uv run python manage.py makemigrations referrals
 uv run python manage.py migrate
 ```
 
@@ -78,18 +60,18 @@ uv run python manage.py runserver
 ```
 
 Server chalega: `http://localhost:8000`
+Admin panel: `http://localhost:8000/admin/`
 
 ---
 
-### Production ke liye (.env setup)
-
-Jab PostgreSQL + Cloudinary ready ho tab `.env` banao:
+## Production Setup (.env)
 
 ```bash
-copy .env.example .env
+copy aai-bhavani-backend\.env.example aai-bhavani-backend\.env
 ```
 
 `.env` mein ye values daalo:
+
 ```env
 SECRET_KEY=your-secret-key-here
 DATABASE_URL=postgresql://postgres:password@localhost:5432/aai_bhavani
@@ -103,40 +85,55 @@ ADMIN_EMAIL=admin@aaibhavani.com
 
 ---
 
-## Available URLs
+## API Endpoints
 
-| URL | Description |
-|-----|-------------|
-| `http://localhost:8000/admin/` | Django Admin Panel |
-| `http://localhost:8000/api/auth/login/` | JWT Login |
-| `http://localhost:8000/api/cms/site-settings/` | Site settings |
-| `http://localhost:8000/api/cms/page-layout/?page=home` | Page sections order |
-| `http://localhost:8000/api/cms/hero/` | Hero section data |
-| `http://localhost:8000/api/cms/navigation/` | Navbar items |
-| `http://localhost:8000/api/services/` | Services list |
-| `http://localhost:8000/api/properties/` | Properties list |
-| `http://localhost:8000/api/gallery/` | Gallery items |
-| `http://localhost:8000/api/testimonials/` | Testimonials |
-| `http://localhost:8000/api/team/` | Team members |
-| `http://localhost:8000/api/faqs/` | FAQs |
-| `http://localhost:8000/api/inquiries/` | Submit inquiry (POST) |
-| `http://localhost:8000/api/referrals/` | Submit referral (POST) |
-| `http://localhost:8000/api/cms/dashboard/stats/` | Dashboard stats (admin) |
+### Auth
+| URL | Method | Description |
+|-----|--------|-------------|
+| `/api/auth/login/` | POST | JWT login |
+| `/api/auth/token/refresh/` | POST | Token refresh |
+| `/api/auth/me/` | GET | Current user info |
 
----
+### CMS (Admin managed)
+| URL | Method | Description |
+|-----|--------|-------------|
+| `/api/cms/site-settings/` | GET / PATCH | Logo, colors, contact, social links |
+| `/api/cms/hero/` | GET / PUT | Hero banner content |
+| `/api/cms/navigation/` | GET | Navbar items (nested) |
+| `/api/cms/page-layout/?page=home` | GET | Page sections order |
+| `/api/cms/page-layout/reorder/` | PATCH | Drag & drop reorder (admin) |
+| `/api/cms/sections/<id>/` | PATCH | Show/hide section (admin) |
+| `/api/cms/seo/?page=home` | GET | SEO meta tags |
+| `/api/cms/dashboard/stats/` | GET | Dashboard summary (admin) |
+| `/api/cms/email-templates/` | GET / POST / PATCH | Email templates (admin) |
+| `/api/cms/whatsapp-templates/` | GET / POST / PATCH | WhatsApp templates (admin) |
 
-## Common UV Commands
+### Business
+| URL | Method | Description |
+|-----|--------|-------------|
+| `/api/services/` | GET | Services list |
+| `/api/referral-program/` | GET | Referral program info |
+| `/api/properties/` | GET | Properties list (filterable) |
+| `/api/gallery/` | GET | Gallery items |
+| `/api/testimonials/` | GET | Client reviews |
+| `/api/team/` | GET | Team members |
+| `/api/faqs/` | GET | FAQs |
 
-```bash
-uv sync                              # Dependencies install/update
-uv add <package>                     # Naya package add karo
-uv remove <package>                  # Package remove karo
-uv run python manage.py runserver    # Dev server
-uv run python manage.py makemigrations
-uv run python manage.py migrate
-uv run python manage.py createsuperuser
-uv run python manage.py shell        # Django shell
-uv run pytest                        # Tests run karo
+### Inquiries & Referrals
+| URL | Method | Description |
+|-----|--------|-------------|
+| `/api/inquiries/categories/` | GET | Active inquiry categories (for form dropdown) |
+| `/api/inquiries/` | POST | Submit inquiry (public) |
+| `/api/inquiries/` | GET | All inquiries (admin only) |
+| `/api/referrals/` | POST | Submit referral (public) |
+| `/api/referrals/` | GET | All referrals (admin only) |
+
+### Property Filters
+```
+GET /api/properties/?type=sell&category=residential&city=Pune
+GET /api/properties/?min_price=5000000&max_price=10000000
+GET /api/properties/?search=3BHK&ordering=-price
+GET /api/properties/?is_featured=true
 ```
 
 ---
@@ -145,13 +142,55 @@ uv run pytest                        # Tests run karo
 
 | App | Kya karta hai |
 |-----|--------------|
-| `accounts` | Custom User model, JWT auth |
-| `cms` | SiteSettings, PageBuilder, Hero, Navigation, SEO, Theme |
-| `services` | Service cards + Referral Program settings |
-| `properties` | Property listings with images |
+| `accounts` | Custom User model, JWT auth (admin only) |
+| `cms` | SiteSettings, PageBuilder, Hero, Navigation, SEO, Email/WhatsApp Templates |
+| `services` | Service cards + Referral Program info |
+| `properties` | Property listings with images, rich filtering |
 | `gallery` | Images + YouTube/Instagram videos |
 | `testimonials` | Client reviews |
 | `team` | Team member profiles |
 | `faqs` | FAQ questions |
-| `inquiries` | Contact form + email notification |
+| `inquiries` | Dynamic categories, contact form, email notification |
 | `referrals` | Referral submissions + commission tracking |
+
+---
+
+## Email & WhatsApp Templates
+
+Admin panel se templates edit karo — `{{placeholders}}` support hai:
+
+| Placeholder | Value |
+|-------------|-------|
+| `{{customer_name}}` | Inquiry submitter ka naam |
+| `{{mobile}}` | Phone number |
+| `{{email}}` | Email address |
+| `{{category}}` | Inquiry category (e.g., Buy Property) |
+| `{{message}}` | Customer ka message |
+| `{{company_name}}` | Aai Bhavani Consultant |
+| `{{date}}` | Submission date & time |
+
+---
+
+## Common UV Commands
+
+```bash
+uv sync                              # Dependencies install/update
+uv add <package>                     # Naya package add karo
+uv run python manage.py runserver    # Dev server
+uv run python manage.py migrate      # Migrations apply karo
+uv run python manage.py createsuperuser
+uv run python manage.py shell        # Django shell
+uv run pytest                        # Tests run karo
+```
+
+---
+
+## API Tester
+
+Project mein ek built-in API tester hai:
+
+```
+aai-bhavani-backend/test_frontend.html
+```
+
+Browser mein directly open karo — sab endpoints test ho jaate hain.
