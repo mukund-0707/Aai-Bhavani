@@ -1,33 +1,31 @@
 from django.db import models
-from django.utils.text import slugify
 
 
-# ── Inquiry Category (Dynamic) ────────────────────────────────────────────────
+# ── Inquiry Category ──────────────────────────────────────────────────────────
 class InquiryCategory(models.Model):
     """
-    Admin se manage hone wali dynamic inquiry categories.
-    Code change kiye bina naye categories add ho sakti hain.
-    Examples: Buy Property, Sell Property, Home Loan, Interior Design
+    Service ke andar ki sub-categories.
+    Example:
+        Service: Property Consulting → Buy Property, Sell Property, Rent
+        Service: Home Loan          → New Loan, Balance Transfer
+        Service: Interior Design    → (koi category nahi — direct inquiry)
     """
-    name       = models.CharField(max_length=100, unique=True)
-    slug       = models.SlugField(max_length=100, unique=True, blank=True)
-    is_active  = models.BooleanField(default=True)
-    order      = models.PositiveIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    service   = models.ForeignKey(
+        'services.Service',
+        on_delete=models.CASCADE,
+        related_name='inquiry_categories'
+    )
+    name      = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    order     = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering        = ['order', 'name']
-        verbose_name    = 'Inquiry Category'
+        ordering            = ['order', 'name']
+        verbose_name        = 'Inquiry Category'
         verbose_name_plural = 'Inquiry Categories'
 
-    def save(self, *args, **kwargs):
-        # slug auto-generate karo agar blank hai
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
-
     def __str__(self):
-        return self.name
+        return f"{self.service.title} → {self.name}"
 
 
 # ── Inquiry ───────────────────────────────────────────────────────────────────
@@ -39,13 +37,14 @@ class Inquiry(models.Model):
         IN_PROGRESS = 'in_progress', 'In Progress'
         CLOSED      = 'closed',      'Closed'
 
-    name     = models.CharField(max_length=100)
-    phone    = models.CharField(max_length=15)
-    email    = models.EmailField(blank=True)
-    message  = models.TextField(blank=True)
-
-    # Dynamic category (FK) — replaces old hardcoded service_type
-    # SET_NULL: category delete ho jaaye to inquiry orphan na ho, sirf NULL ho jaaye
+    # Service mandatory in form, optional in DB (SET_NULL agar service delete ho)
+    service  = models.ForeignKey(
+        'services.Service',
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='inquiries'
+    )
+    # Category optional — sirf tab hoga jab service mein categories hon
     category = models.ForeignKey(
         InquiryCategory,
         null=True, blank=True,
@@ -53,17 +52,13 @@ class Inquiry(models.Model):
         related_name='inquiries'
     )
 
-    # Legacy field — migration ke baad remove kar sakte hain (abhi rakhna safe hai)
-    service_type = models.CharField(max_length=20, blank=True, default='')
+    name    = models.CharField(max_length=100)
+    phone   = models.CharField(max_length=15)
+    email   = models.EmailField(blank=True)
+    message = models.TextField(blank=True)
 
-    property     = models.ForeignKey(
-        'properties.Property',
-        null=True, blank=True,
-        on_delete=models.SET_NULL
-    )
-    status   = models.CharField(max_length=20, choices=Status.choices, default=Status.NEW)
-    source   = models.CharField(max_length=50, default='website')
-    notes    = models.TextField(blank=True)
+    status     = models.CharField(max_length=20, choices=Status.choices, default=Status.NEW)
+    notes      = models.TextField(blank=True, help_text='Admin internal notes')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -71,5 +66,7 @@ class Inquiry(models.Model):
         verbose_name_plural = 'Inquiries'
 
     def __str__(self):
-        category_name = self.category.name if self.category else self.service_type or 'General'
-        return f"{self.name} — {category_name} ({self.status})"
+        service_name  = self.service.title   if self.service  else 'General'
+        category_name = self.category.name   if self.category else ''
+        label = f"{service_name} — {category_name}" if category_name else service_name
+        return f"{self.name} | {label} ({self.status})"

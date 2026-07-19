@@ -4,34 +4,25 @@ from apps.inquiries.models import InquiryCategory, Inquiry
 
 @admin.register(InquiryCategory)
 class InquiryCategoryAdmin(admin.ModelAdmin):
-    list_display  = ['name', 'slug', 'is_active', 'order']
+    list_display  = ['name', 'service', 'is_active', 'order']
+    list_filter   = ['is_active', 'service']
     list_editable = ['is_active', 'order']
-    list_filter   = ['is_active']
-    search_fields = ['name']
-    prepopulated_fields = {'slug': ('name',)}  # Admin form mein slug auto-fill
+    ordering      = ['service', 'order']
 
 
 @admin.register(Inquiry)
 class InquiryAdmin(admin.ModelAdmin):
-    list_display   = ['name', 'phone', 'category', 'status', 'source', 'created_at']
-    list_filter    = ['status', 'category', 'source']
-    list_editable  = ['status']
+    list_display   = ['name', 'phone', 'service', 'category', 'status', 'created_at']
+    list_filter    = ['status', 'service', 'category']
     search_fields  = ['name', 'phone', 'email']
-    readonly_fields = ['created_at']
-    autocomplete_fields = []
+    readonly_fields = ['name', 'phone', 'email', 'message', 'service', 'category', 'created_at']
+    list_per_page  = 25
 
     fieldsets = (
-        ('Customer Info', {
-            'fields': ('name', 'phone', 'email')
-        }),
         ('Inquiry Details', {
-            'fields': ('category', 'message', 'property')
+            'fields': ('name', 'phone', 'email', 'service', 'category', 'message', 'created_at')
         }),
-        ('Admin Management', {
-            'fields': ('status', 'source', 'notes')
-        }),
-        ('Timestamps', {
-            'fields': ('created_at',),
-            'classes': ('collapse',),
+        ('Admin', {
+            'fields': ('status', 'notes')
         }),
     )

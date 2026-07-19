@@ -39,15 +39,12 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     'apps.accounts',
-    'apps.cms',
+    'apps.core',
     'apps.services',
     'apps.properties',
-    'apps.gallery',
-    'apps.testimonials',
-    'apps.team',
-    'apps.faqs',
     'apps.inquiries',
     'apps.referrals',
+    'apps.content',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -162,3 +159,8 @@ EMAIL_USE_TLS       = True
 EMAIL_HOST_USER     = env('EMAIL_HOST_USER',     default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 ADMIN_EMAIL         = env('ADMIN_EMAIL',         default='admin@localhost')
+
+# ── WhatsApp ──────────────────────────────────────────────────────────────────
+# 'wame'   → wa.me redirect URL (development, free, no API)
+# 'twilio' → Twilio WhatsApp API (production)
+WHATSAPP_BACKEND = env('WHATSAPP_BACKEND', default='wame')

@@ -1,6 +1,6 @@
 # Aai Bhavani Consultant
 
-CMS-powered website — Django backend + Next.js frontend.
+Property consulting, home loan, interior design aur digital marketing services — Django backend + Next.js frontend.
 
 ---
 
@@ -9,7 +9,10 @@ CMS-powered website — Django backend + Next.js frontend.
 ```
 Aai-Bhavani/
 ├── aai-bhavani-backend/    ← Django + DRF (Python)
-└── aai-bhavani-frontend/   ← Next.js (coming soon)
+├── aai-bhavani-frontend/   ← Next.js (coming soon)
+└── docs/
+    ├── analysis.md         ← Architecture decisions
+    └── planning.md         ← Implementation plan
 ```
 
 ---
@@ -23,8 +26,6 @@ Aai-Bhavani/
 > **Dev mein kuch extra setup nahi chahiye!**
 > SQLite use hota hai, email console pe print hoti hai, Cloudinary ki zarurat nahi.
 
----
-
 ### 1. UV Install karo (ek baar)
 
 ```bash
@@ -36,15 +37,14 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 
 ```bash
 cd aai-bhavani-backend
-
-# Virtual environment + dependencies install
 uv sync
 ```
 
-### 3. Migrate karo
+### 3. Migrate + Initial data
 
 ```bash
 uv run python manage.py migrate
+uv run python manage.py loaddata fixtures/initial_data.json
 ```
 
 ### 4. Superuser banao
@@ -59,7 +59,7 @@ uv run python manage.py createsuperuser
 uv run python manage.py runserver
 ```
 
-Server chalega: `http://localhost:8000`
+Server: `http://localhost:8000`
 Admin panel: `http://localhost:8000/admin/`
 
 ---
@@ -74,14 +74,29 @@ copy aai-bhavani-backend\.env.example aai-bhavani-backend\.env
 
 ```env
 SECRET_KEY=your-secret-key-here
+DEBUG=False
 DATABASE_URL=postgresql://postgres:password@localhost:5432/aai_bhavani
 CLOUDINARY_CLOUD_NAME=xxx
 CLOUDINARY_API_KEY=xxx
 CLOUDINARY_API_SECRET=xxx
 EMAIL_HOST_USER=your@gmail.com
 EMAIL_HOST_PASSWORD=your_app_password
-ADMIN_EMAIL=admin@aaibhavani.com
+WHATSAPP_BACKEND=wame
 ```
+
+---
+
+## Apps Overview
+
+| App | Kya karta hai |
+|-----|--------------|
+| `accounts` | Custom User model, JWT auth |
+| `core` | SiteSettings (logo, contact, hero), Email + WhatsApp templates |
+| `services` | Service listings + inline referral settings |
+| `properties` | Property listings with images, filtering |
+| `inquiries` | Service-linked categories, inquiry form, notifications |
+| `referrals` | Referral submissions + commission tracking |
+| `content` | Testimonials, Team members, FAQs |
 
 ---
 
@@ -94,39 +109,50 @@ ADMIN_EMAIL=admin@aaibhavani.com
 | `/api/auth/token/refresh/` | POST | Token refresh |
 | `/api/auth/me/` | GET | Current user info |
 
-### CMS (Admin managed)
+### Core (Public GET / Admin PATCH)
 | URL | Method | Description |
 |-----|--------|-------------|
-| `/api/cms/site-settings/` | GET / PATCH | Logo, colors, contact, social links |
-| `/api/cms/hero/` | GET / PUT | Hero banner content |
-| `/api/cms/navigation/` | GET | Navbar items (nested) |
-| `/api/cms/page-layout/?page=home` | GET | Page sections order |
-| `/api/cms/page-layout/reorder/` | PATCH | Drag & drop reorder (admin) |
-| `/api/cms/sections/<id>/` | PATCH | Show/hide section (admin) |
-| `/api/cms/seo/?page=home` | GET | SEO meta tags |
-| `/api/cms/dashboard/stats/` | GET | Dashboard summary (admin) |
-| `/api/cms/email-templates/` | GET / POST / PATCH | Email templates (admin) |
-| `/api/cms/whatsapp-templates/` | GET / POST / PATCH | WhatsApp templates (admin) |
+| `/api/site-settings/` | GET | Logo, contact, social, hero content |
+| `/api/site-settings/` | PATCH | Update settings (admin only) |
+| `/api/core/email-templates/` | GET / PATCH | Email templates (admin only) |
+| `/api/core/whatsapp-templates/` | GET / PATCH | WhatsApp templates (admin only) |
 
-### Business
+### Services
 | URL | Method | Description |
 |-----|--------|-------------|
-| `/api/services/` | GET | Services list |
-| `/api/referral-program/` | GET | Referral program info |
+| `/api/services/` | GET | Active services list (with referral info) |
+| `/api/services/<slug>/` | GET | Single service detail |
+| `/api/services/` | POST / PATCH / DELETE | Admin CRUD |
+
+### Properties
+| URL | Method | Description |
+|-----|--------|-------------|
 | `/api/properties/` | GET | Properties list (filterable) |
-| `/api/gallery/` | GET | Gallery items |
-| `/api/testimonials/` | GET | Client reviews |
-| `/api/team/` | GET | Team members |
-| `/api/faqs/` | GET | FAQs |
+| `/api/properties/<id>/` | GET | Single property detail |
+| `/api/properties/` | POST / PATCH / DELETE | Admin CRUD |
 
-### Inquiries & Referrals
+### Inquiries
 | URL | Method | Description |
 |-----|--------|-------------|
-| `/api/inquiries/categories/` | GET | Active inquiry categories (for form dropdown) |
+| `/api/inquiries/categories/` | GET | Saari active categories |
+| `/api/inquiries/categories/?service=<slug>` | GET | Us service ki categories |
 | `/api/inquiries/` | POST | Submit inquiry (public) |
 | `/api/inquiries/` | GET | All inquiries (admin only) |
+| `/api/inquiries/<id>/` | PATCH | Status + notes update (admin only) |
+
+### Referrals
+| URL | Method | Description |
+|-----|--------|-------------|
 | `/api/referrals/` | POST | Submit referral (public) |
 | `/api/referrals/` | GET | All referrals (admin only) |
+| `/api/referrals/<id>/` | PATCH | Status + commission update (admin only) |
+
+### Content
+| URL | Method | Description |
+|-----|--------|-------------|
+| `/api/testimonials/` | GET | Active testimonials |
+| `/api/team/` | GET | Active team members |
+| `/api/faqs/` | GET | Active FAQs |
 
 ### Property Filters
 ```
@@ -138,20 +164,41 @@ GET /api/properties/?is_featured=true
 
 ---
 
-## Apps Overview
+## Inquiry Form Flow
 
-| App | Kya karta hai |
-|-----|--------------|
-| `accounts` | Custom User model, JWT auth (admin only) |
-| `cms` | SiteSettings, PageBuilder, Hero, Navigation, SEO, Email/WhatsApp Templates |
-| `services` | Service cards + Referral Program info |
-| `properties` | Property listings with images, rich filtering |
-| `gallery` | Images + YouTube/Instagram videos |
-| `testimonials` | Client reviews |
-| `team` | Team member profiles |
-| `faqs` | FAQ questions |
-| `inquiries` | Dynamic categories, contact form, email notification |
-| `referrals` | Referral submissions + commission tracking |
+```
+1. GET /api/services/                          → Service dropdown
+2. GET /api/inquiries/categories/?service=<slug> → Us service ki categories
+   └── Categories hain → dropdown dikhao
+   └── [] empty → dropdown hide karo (direct inquiry)
+3. POST /api/inquiries/                        → Submit karo
+```
+
+**Response mein `whatsapp_url` aata hai** — frontend success screen pe "WhatsApp pe contact karo" button dikhao.
+
+---
+
+## Notification System
+
+Inquiry ya referral submit hone par automatically fire hota hai:
+
+```
+1. User ko confirmation EMAIL      (agar email diya ho)
+   FROM: Aai Bhavani Gmail
+
+2. User ko WhatsApp confirmation   (hamesha — phone mandatory hai)
+   Dev:  wa.me redirect URL (free, no API)
+   Prod: Twilio (WHATSAPP_BACKEND=twilio)
+
+3. Saare admin users ko notification EMAIL
+   TO: is_staff=True users
+```
+
+**Dev/Prod switch — sirf ek line:**
+```env
+WHATSAPP_BACKEND=wame    # development (default)
+WHATSAPP_BACKEND=twilio  # production
+```
 
 ---
 
@@ -161,36 +208,58 @@ Admin panel se templates edit karo — `{{placeholders}}` support hai:
 
 | Placeholder | Value |
 |-------------|-------|
-| `{{customer_name}}` | Inquiry submitter ka naam |
+| `{{customer_name}}` | User ka naam |
 | `{{mobile}}` | Phone number |
 | `{{email}}` | Email address |
-| `{{category}}` | Inquiry category (e.g., Buy Property) |
-| `{{message}}` | Customer ka message |
+| `{{service}}` | Service name |
+| `{{category}}` | Category (e.g., Buy Property) |
+| `{{message}}` | User ka message |
 | `{{company_name}}` | Aai Bhavani Consultant |
+| `{{whatsapp_number}}` | Company WhatsApp number |
 | `{{date}}` | Submission date & time |
+
+**4 Templates hain:**
+- `inquiry_customer_confirmation` — User ko thank you
+- `inquiry_admin_notification` — Admins ko new inquiry alert
+- `referral_customer_confirmation` — Referrer ko thank you
+- `referral_admin_notification` — Admins ko new referral alert
+
+---
+
+## Referral Settings
+
+Har service ke andar referral settings hain — admin se manage karo:
+
+| Field | Description |
+|-------|-------------|
+| `is_referral_enabled` | Is service ke liye referral on/off |
+| `referral_type` | `percent` ya `flat` |
+| `referral_value` | 50 (50%) ya 10000 (₹10,000) |
+| `referral_note` | "Festival Offer", "Limited Time" etc. |
 
 ---
 
 ## Common UV Commands
 
 ```bash
-uv sync                              # Dependencies install/update
-uv add <package>                     # Naya package add karo
-uv run python manage.py runserver    # Dev server
-uv run python manage.py migrate      # Migrations apply karo
-uv run python manage.py createsuperuser
-uv run python manage.py shell        # Django shell
-uv run pytest                        # Tests run karo
+uv sync                                        # Dependencies install/update
+uv add <package>                               # Naya package add karo
+uv run python manage.py runserver              # Dev server
+uv run python manage.py migrate                # Migrations apply karo
+uv run python manage.py makemigrations         # Naye migrations banao
+uv run python manage.py createsuperuser        # Admin user banao
+uv run python manage.py loaddata fixtures/initial_data.json  # Sample data load karo
+uv run python manage.py shell                  # Django shell
 ```
 
 ---
 
-## API Tester
+## Intentionally Not Built (Future)
 
-Project mein ek built-in API tester hai:
-
-```
-aai-bhavani-backend/test_frontend.html
-```
-
-Browser mein directly open karo — sab endpoints test ho jaate hain.
+| Feature | Kab add karna |
+|---------|--------------|
+| SEO Management | Jab client specifically mange |
+| Gallery Module | Jab 50+ photos manage karne padein |
+| Service Categories | Jab 20+ services ho jaayein |
+| WhatsApp Auto-send (Twilio) | Production pe jaane ke baad |
+| Redis Caching | Real traffic aane par |

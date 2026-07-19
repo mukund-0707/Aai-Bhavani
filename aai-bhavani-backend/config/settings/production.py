@@ -2,9 +2,9 @@ from .base import *
 
 DEBUG = False
 
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# Production mein actual Gmail se email jaayegi
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Production mein Twilio se WhatsApp jaayega
+# WHATSAPP_BACKEND = 'twilio'  # uncomment when Twilio is configured
+WHATSAPP_BACKEND = 'wame'  # wa.me tab tak jab tak Twilio setup na ho

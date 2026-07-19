@@ -6,7 +6,11 @@ from apps.referrals.models import ReferralSubmission
 from apps.referrals.serializers import ReferralSubmissionSerializer, ReferralAdminSerializer
 
 
-class ReferralViewSet(viewsets.ModelViewSet):
+class ReferralSubmissionViewSet(viewsets.ModelViewSet):
+    """
+    Public: POST — referral submit karo
+    Admin:  GET list/detail, PATCH (status + commission update)
+    """
 
     def get_serializer_class(self):
         if self.request.user.is_authenticated:
@@ -14,9 +18,8 @@ class ReferralViewSet(viewsets.ModelViewSet):
         return ReferralSubmissionSerializer
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return ReferralSubmission.objects.all()
-        return ReferralSubmission.objects.none()
+        # Always return full queryset — permissions handle access control
+        return ReferralSubmission.objects.select_related('service').all()
 
     def get_permissions(self):
         if self.action == 'create':
@@ -26,8 +29,21 @@ class ReferralViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = ReferralSubmissionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        referral = serializer.save()
+
+        # Notifications — referral save hone ke baad fire karo
+        whatsapp_url = None
+        try:
+            from apps.core.notifications import NotificationService
+            whatsapp_url = NotificationService.send_referral_notifications(referral)
+        except Exception:
+            pass
+
         return Response(
-            {'success': True, 'message': 'Referral submitted! We will reach out soon.'},
+            {
+                'success':      True,
+                'message':      'Referral submit ho gaya! Hum jald contact karenge.',
+                'whatsapp_url': whatsapp_url,
+            },
             status=status.HTTP_201_CREATED
         )

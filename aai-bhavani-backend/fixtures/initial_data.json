@@ -1,190 +1,226 @@
 [
   {
+    "model": "core.sitesettings",
+    "pk": 1,
+    "fields": {
+      "site_name": "Aai Bhavani Consultant",
+      "site_tagline": "Aapka Vishwasneey Property Partner",
+      "logo": "",
+      "favicon": "",
+      "phone": "+91 98765 43210",
+      "whatsapp": "919876543210",
+      "email": "info@aaibhavani.com",
+      "address": "Pune, Maharashtra, India",
+      "google_map_url": "",
+      "working_hours": "Mon-Sat: 9am - 7pm",
+      "facebook_url": "",
+      "instagram_url": "",
+      "linkedin_url": "",
+      "youtube_url": "",
+      "hero_title": "Aapka Sapna, Hamari Zimmedari",
+      "hero_subtitle": "Property Consulting | Interior Design | Home Loan | Digital Marketing",
+      "hero_description": "Aai Bhavani Consultant — Pune ka vishwasneey property aur services partner.",
+      "hero_image": "",
+      "hero_button_text": "Services Dekhein",
+      "hero_button_link": "/services",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
     "model": "services.service",
     "pk": 1,
     "fields": {
-      "title": "Property Consultant",
-      "slug": "property-consultant",
-      "short_description": "Buyer aur Seller ke beech trusted broker. Sirf 2% commission pe apni dream property paaein.",
-      "long_description": "Hum aapko best properties dikhate hain — residential, commercial aur plots. Humara builder network bahut strong hai. Hum sirf 2% commission lete hain deal close hone par. Buyer aur Seller dono ki needs hum samajhte hain.",
+      "title": "Property Consulting",
+      "slug": "property-consulting",
       "icon": "home",
-      "image": "",
-      "banner": "",
+      "banner_image": "",
+      "short_description": "Buy, sell ya rent karne mein expert guidance.",
+      "long_description": "Hamari team aapko sahi property dhundhne mein, negotiations mein, aur legal processes mein help karti hai.",
       "order": 1,
       "is_active": true,
-      "created_at": "2026-07-04T10:00:00Z"
+      "created_at": "2026-01-01T00:00:00Z",
+      "is_referral_enabled": true,
+      "referral_type": "percent",
+      "referral_value": "50.00",
+      "referral_note": "Deal close hone par 50% profit share"
     }
   },
   {
     "model": "services.service",
     "pk": 2,
+    "fields": {
+      "title": "Home Loan",
+      "slug": "home-loan",
+      "icon": "bank",
+      "banner_image": "",
+      "short_description": "Best interest rate par home loan assistance.",
+      "long_description": "Sabse competitive rates par home loan processing mein complete support.",
+      "order": 2,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "is_referral_enabled": true,
+      "referral_type": "flat",
+      "referral_value": "5000.00",
+      "referral_note": "Loan disbursal par flat Rs.5000"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 3,
     "fields": {
       "title": "Interior Design",
       "slug": "interior-design",
-      "short_description": "Aapke ghar ya office ko beautiful aur functional banate hain. Budget mein best design.",
-      "long_description": "Hum residential aur commercial interior design karte hain. Kitchen, bedroom, living room, office — sab kuch. 3D design, material selection aur execution sab included hai. Aapka budget aur taste dono ka khayal rakhte hain.",
       "icon": "palette",
-      "image": "",
-      "banner": "",
-      "order": 2,
+      "banner_image": "",
+      "short_description": "Aapke ghar ko sundar banana hamara kaam.",
+      "long_description": "Modern aur budget-friendly interior design solutions for homes and offices.",
+      "order": 3,
       "is_active": true,
-      "created_at": "2026-07-04T10:00:00Z"
+      "created_at": "2026-01-01T00:00:00Z",
+      "is_referral_enabled": false,
+      "referral_type": "percent",
+      "referral_value": "50.00",
+      "referral_note": ""
     }
   },
   {
     "model": "services.service",
-    "pk": 3,
+    "pk": 4,
     "fields": {
       "title": "Digital Marketing",
       "slug": "digital-marketing",
-      "short_description": "Aapke business ki online presence badhate hain. Social media, SEO aur paid ads.",
-      "long_description": "Hum aapke business ko online grow karne mein help karte hain. Social media management, SEO, Google Ads, Facebook Ads — sab kuch. Monthly reports aur transparent results. Aapka business badhega, guaranteed.",
-      "icon": "trending-up",
-      "image": "",
-      "banner": "",
-      "order": 3,
-      "is_active": true,
-      "created_at": "2026-07-04T10:00:00Z"
-    }
-  },
-  {
-    "model": "services.service",
-    "pk": 4,
-    "fields": {
-      "title": "Referral Program",
-      "slug": "referral-program",
-      "short_description": "Client laao aur hamara 50% profit kamao. Jitne zyada referrals utni zyada income.",
-      "long_description": "Hamare referral program mein join karo. Koi bhi genuine client laao — property buyer, seller ya interior design client. Deal close hone par hamara 50% profit tumhara. No limit on referrals, no limit on income.",
-      "icon": "users",
-      "image": "",
-      "banner": "",
+      "icon": "megaphone",
+      "banner_image": "",
+      "short_description": "Aapke business ko online grow karo.",
+      "long_description": "Social media, SEO, aur paid ads ke through business growth.",
       "order": 4,
       "is_active": true,
-      "created_at": "2026-07-04T10:00:00Z"
+      "created_at": "2026-01-01T00:00:00Z",
+      "is_referral_enabled": false,
+      "referral_type": "percent",
+      "referral_value": "50.00",
+      "referral_note": ""
     }
   },
   {
-    "model": "services.referralprogram",
+    "model": "inquiries.inquirycategory",
+    "pk": 1,
+    "fields": { "service": 1, "name": "Buy Property",     "is_active": true, "order": 1 }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 2,
+    "fields": { "service": 1, "name": "Sell Property",    "is_active": true, "order": 2 }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 3,
+    "fields": { "service": 1, "name": "Rent Property",    "is_active": true, "order": 3 }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 4,
+    "fields": { "service": 2, "name": "New Home Loan",    "is_active": true, "order": 1 }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 5,
+    "fields": { "service": 2, "name": "Balance Transfer", "is_active": true, "order": 2 }
+  },
+  {
+    "model": "core.emailtemplate",
     "pk": 1,
     "fields": {
-      "title": "Referral Program — 50% Profit Share",
-      "description": "Koi bhi genuine client laao aur hamara 50% profit kamao. Property deal, interior design ya digital marketing — kisi bhi service ke liye client laao. Deal close hone par commission seedha aapke account mein.",
-      "commission_pct": "50.00",
-      "image": "",
-      "steps": [
-        {"step": 1, "text": "Register karein hamare referral program mein"},
-        {"step": 2, "text": "Apne network mein property/interior/marketing clients dhundein"},
-        {"step": 3, "text": "Client ka naam aur number submit karein"},
-        {"step": 4, "text": "Hum client se deal close karein"},
-        {"step": 5, "text": "50% profit aapko milega — seedha aapke account mein"}
-      ],
-      "faq": [
-        {"q": "Commission kab milega?", "a": "Deal officially close hone ke 7 working days ke andar commission transfer ho jayega."},
-        {"q": "Kitne clients refer kar sakte hain?", "a": "Koi limit nahi — jitne chahein utne clients refer karein."},
-        {"q": "Kya referral program free hai?", "a": "Haan, bilkul free hai. Koi registration fee nahi."},
-        {"q": "Commission % fix hai?", "a": "Abhi 50% hai. Kisi bhi change ke liye admin se contact karein."}
-      ],
-      "button_text": "Abhi Join Karein",
-      "button_link": "/referral",
+      "name": "Inquiry — User Confirmation",
+      "trigger": "inquiry_customer_confirmation",
+      "subject": "Thank You for Your Inquiry — {{company_name}}",
+      "body_text": "Dear {{customer_name}},\n\nThank you for reaching out to {{company_name}}!\nWe have received your inquiry for: {{category}}\n\nOur team will contact you shortly on {{mobile}}.\nFor urgent queries, WhatsApp us: {{whatsapp_number}}\n\nRegards,\n{{company_name}} Team",
+      "body_html": "",
       "is_active": true,
-      "updated_at": "2026-07-04T10:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z"
     }
   },
   {
-    "model": "faqs.faq",
-    "pk": 1,
-    "fields": {
-      "question": "Property deal mein aap kya commission lete hain?",
-      "answer": "Hum sirf 2% commission lete hain — deal value ka. Koi hidden charges nahi.",
-      "category": "property",
-      "sort_order": 1,
-      "is_active": true
-    }
-  },
-  {
-    "model": "faqs.faq",
+    "model": "core.emailtemplate",
     "pk": 2,
     "fields": {
-      "question": "Interior design project kitne time mein complete hota hai?",
-      "answer": "Project size ke hisaab se 2-8 weeks lagte hain. Pehle 3D design approval phir execution.",
-      "category": "interior",
-      "sort_order": 2,
-      "is_active": true
+      "name": "Inquiry — Admin Notification",
+      "trigger": "inquiry_admin_notification",
+      "subject": "New Inquiry: {{category}} — {{customer_name}}",
+      "body_text": "New inquiry received!\n\nName     : {{customer_name}}\nPhone    : {{mobile}}\nEmail    : {{email}}\nService  : {{service}}\nCategory : {{category}}\nMessage  : {{message}}\nDate     : {{date}}",
+      "body_html": "",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
     }
   },
   {
-    "model": "faqs.faq",
+    "model": "core.emailtemplate",
     "pk": 3,
     "fields": {
-      "question": "Referral commission kab milta hai?",
-      "answer": "Deal close hone ke 7 working days ke andar commission seedha aapke account mein transfer ho jata hai.",
-      "category": "referral",
-      "sort_order": 3,
-      "is_active": true
+      "name": "Referral — Referrer Confirmation",
+      "trigger": "referral_customer_confirmation",
+      "subject": "Thank You for Your Referral — {{company_name}}",
+      "body_text": "Dear {{customer_name}},\n\nThank you for referring to {{company_name}}!\nService: {{service}}\n\nOur team will review and contact you shortly.\n\nRegards,\n{{company_name}} Team",
+      "body_html": "",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
     }
   },
   {
-    "model": "faqs.faq",
+    "model": "core.emailtemplate",
     "pk": 4,
     "fields": {
-      "question": "Kya aap Pune ke bahar bhi properties dikhate hain?",
-      "answer": "Abhi hum primarily Pune aur surrounding areas mein kaam karte hain. Future mein expand karenge.",
-      "category": "property",
-      "sort_order": 4,
-      "is_active": true
+      "name": "Referral — Admin Notification",
+      "trigger": "referral_admin_notification",
+      "subject": "New Referral: {{service}} — {{customer_name}}",
+      "body_text": "New referral received!\n\nReferrer : {{customer_name}}\nPhone    : {{mobile}}\nEmail    : {{email}}\nService  : {{service}}\nClient   : {{client_name}}\nDate     : {{date}}",
+      "body_html": "",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
     }
   },
   {
-    "model": "faqs.faq",
-    "pk": 5,
-    "fields": {
-      "question": "Digital marketing ke results kitne time mein dikhte hain?",
-      "answer": "SEO mein 3-6 months lagte hain. Paid ads mein pehle hafte se hi results dikhne lagte hain.",
-      "category": "digital",
-      "sort_order": 5,
-      "is_active": true
-    }
-  },
-  {
-    "model": "testimonials.testimonial",
+    "model": "core.whatsapptemplate",
     "pk": 1,
     "fields": {
-      "client_name": "Rajesh Sharma",
-      "photo": "",
-      "rating": 5,
-      "review": "Bahut acchi service! Humari property bahut jaldi sell ho gayi. Team professional hai aur transparent bhi. Commission bhi reasonable hai.",
-      "location": "Pune",
-      "project": "3BHK Sale - Baner",
+      "name": "Inquiry — User Confirmation",
+      "trigger": "inquiry_customer_confirmation",
+      "template_body": "Namaste {{customer_name}}!\n\n{{company_name}} mein aapka swagat hai.\nAapki *{{category}}* inquiry humne receive kar li hai.\n\nHum aapko jald contact karenge.\nKoi sawaal ho to WhatsApp karein: {{whatsapp_number}}\n\nDhanyawad!",
       "is_active": true,
-      "order": 1
+      "updated_at": "2026-01-01T00:00:00Z"
     }
   },
   {
-    "model": "testimonials.testimonial",
+    "model": "core.whatsapptemplate",
     "pk": 2,
     "fields": {
-      "client_name": "Priya Patel",
-      "photo": "",
-      "rating": 5,
-      "review": "Interior design bilkul meri expectation ke anusaar hua. Budget mein rahke bhi itna sundar kaam kar diya. Thank you Aai Bhavani team!",
-      "location": "Kothrud, Pune",
-      "project": "2BHK Interior - Full Home",
+      "name": "Inquiry — Admin Notification",
+      "trigger": "inquiry_admin_notification",
+      "template_body": "New Inquiry Alert!\n\nName: {{customer_name}}\nPhone: {{mobile}}\nService: {{service}}\nCategory: {{category}}\nDate: {{date}}",
       "is_active": true,
-      "order": 2
+      "updated_at": "2026-01-01T00:00:00Z"
     }
   },
   {
-    "model": "testimonials.testimonial",
+    "model": "core.whatsapptemplate",
     "pk": 3,
     "fields": {
-      "client_name": "Suresh Desai",
-      "photo": "",
-      "rating": 5,
-      "review": "Referral program se mujhe bahut acchi income ho rahi hai. 3 clients diye aur teeno deals close ho gayi. Commission time pe mila.",
-      "location": "Wakad, Pune",
-      "project": "Referral Commission",
+      "name": "Referral — Referrer Confirmation",
+      "trigger": "referral_customer_confirmation",
+      "template_body": "Namaste {{customer_name}}!\n\nAapka referral {{company_name}} mein receive ho gaya hai.\nService: *{{service}}*\n\nHum jald aapse contact karenge.\nDhanyawad!",
       "is_active": true,
-      "order": 3
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.whatsapptemplate",
+    "pk": 4,
+    "fields": {
+      "name": "Referral — Admin Notification",
+      "trigger": "referral_admin_notification",
+      "template_body": "New Referral Alert!\n\nReferrer: {{customer_name}}\nPhone: {{mobile}}\nService: {{service}}\nClient: {{client_name}}\nDate: {{date}}",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
     }
   }
 ]

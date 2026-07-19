@@ -1,9 +1,11 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from apps.inquiries.views import InquiryViewSet, InquiryCategoryViewSet
+from apps.inquiries.views import InquiryCategoryViewSet, InquiryViewSet
 
 router = DefaultRouter()
-router.register('categories', InquiryCategoryViewSet, basename='inquiry-category')
-router.register('',           InquiryViewSet,         basename='inquiry')
+router.register('inquiries/categories', InquiryCategoryViewSet, basename='inquiry-category')
+router.register('inquiries',            InquiryViewSet,         basename='inquiry')
 
-urlpatterns = [path('', include(router.urls))]
+urlpatterns = [
+    path('', include(router.urls)),
+]
