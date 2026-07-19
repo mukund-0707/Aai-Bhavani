@@ -1,0 +1,226 @@
+[
+  {
+    "model": "core.sitesettings",
+    "pk": 1,
+    "fields": {
+      "site_name": "Aai Bhavani Consultant",
+      "site_tagline": "Aapka Vishwasneey Property Partner",
+      "logo": "",
+      "favicon": "",
+      "phone": "+91 98765 43210",
+      "whatsapp": "919876543210",
+      "email": "info@aaibhavani.com",
+      "address": "Pune, Maharashtra, India",
+      "google_map_url": "",
+      "working_hours": "Mon-Sat: 9am - 7pm",
+      "facebook_url": "",
+      "instagram_url": "",
+      "linkedin_url": "",
+      "youtube_url": "",
+      "hero_title": "Aapka Sapna, Hamari Zimmedari",
+      "hero_subtitle": "Property Consulting | Interior Design | Home Loan | Digital Marketing",
+      "hero_description": "Aai Bhavani Consultant — Pune ka vishwasneey property aur services partner.",
+      "hero_image": "",
+      "hero_button_text": "Services Dekhein",
+      "hero_button_link": "/services",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 1,
+    "fields": {
+      "title": "Property Consulting",
+      "slug": "property-consulting",
+      "icon": "home",
+      "banner_image": "",
+      "short_description": "Buy, sell ya rent karne mein expert guidance.",
+      "long_description": "Hamari team aapko sahi property dhundhne mein, negotiations mein, aur legal processes mein help karti hai.",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "is_referral_enabled": true,
+      "referral_type": "percent",
+      "referral_value": "50.00",
+      "referral_note": "Deal close hone par 50% profit share"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 2,
+    "fields": {
+      "title": "Home Loan",
+      "slug": "home-loan",
+      "icon": "bank",
+      "banner_image": "",
+      "short_description": "Best interest rate par home loan assistance.",
+      "long_description": "Sabse competitive rates par home loan processing mein complete support.",
+      "order": 2,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "is_referral_enabled": true,
+      "referral_type": "flat",
+      "referral_value": "5000.00",
+      "referral_note": "Loan disbursal par flat Rs.5000"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 3,
+    "fields": {
+      "title": "Interior Design",
+      "slug": "interior-design",
+      "icon": "palette",
+      "banner_image": "",
+      "short_description": "Aapke ghar ko sundar banana hamara kaam.",
+      "long_description": "Modern aur budget-friendly interior design solutions for homes and offices.",
+      "order": 3,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "is_referral_enabled": false,
+      "referral_type": "percent",
+      "referral_value": "50.00",
+      "referral_note": ""
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 4,
+    "fields": {
+      "title": "Digital Marketing",
+      "slug": "digital-marketing",
+      "icon": "megaphone",
+      "banner_image": "",
+      "short_description": "Aapke business ko online grow karo.",
+      "long_description": "Social media, SEO, aur paid ads ke through business growth.",
+      "order": 4,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "is_referral_enabled": false,
+      "referral_type": "percent",
+      "referral_value": "50.00",
+      "referral_note": ""
+    }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 1,
+    "fields": { "service": 1, "name": "Buy Property",     "is_active": true, "order": 1 }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 2,
+    "fields": { "service": 1, "name": "Sell Property",    "is_active": true, "order": 2 }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 3,
+    "fields": { "service": 1, "name": "Rent Property",    "is_active": true, "order": 3 }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 4,
+    "fields": { "service": 2, "name": "New Home Loan",    "is_active": true, "order": 1 }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 5,
+    "fields": { "service": 2, "name": "Balance Transfer", "is_active": true, "order": 2 }
+  },
+  {
+    "model": "core.emailtemplate",
+    "pk": 1,
+    "fields": {
+      "name": "Inquiry — User Confirmation",
+      "trigger": "inquiry_customer_confirmation",
+      "subject": "Thank You for Your Inquiry — {{company_name}}",
+      "body_text": "Dear {{customer_name}},\n\nThank you for reaching out to {{company_name}}!\nWe have received your inquiry for: {{category}}\n\nOur team will contact you shortly on {{mobile}}.\nFor urgent queries, WhatsApp us: {{whatsapp_number}}\n\nRegards,\n{{company_name}} Team",
+      "body_html": "",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.emailtemplate",
+    "pk": 2,
+    "fields": {
+      "name": "Inquiry — Admin Notification",
+      "trigger": "inquiry_admin_notification",
+      "subject": "New Inquiry: {{category}} — {{customer_name}}",
+      "body_text": "New inquiry received!\n\nName     : {{customer_name}}\nPhone    : {{mobile}}\nEmail    : {{email}}\nService  : {{service}}\nCategory : {{category}}\nMessage  : {{message}}\nDate     : {{date}}",
+      "body_html": "",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.emailtemplate",
+    "pk": 3,
+    "fields": {
+      "name": "Referral — Referrer Confirmation",
+      "trigger": "referral_customer_confirmation",
+      "subject": "Thank You for Your Referral — {{company_name}}",
+      "body_text": "Dear {{customer_name}},\n\nThank you for referring to {{company_name}}!\nService: {{service}}\n\nOur team will review and contact you shortly.\n\nRegards,\n{{company_name}} Team",
+      "body_html": "",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.emailtemplate",
+    "pk": 4,
+    "fields": {
+      "name": "Referral — Admin Notification",
+      "trigger": "referral_admin_notification",
+      "subject": "New Referral: {{service}} — {{customer_name}}",
+      "body_text": "New referral received!\n\nReferrer : {{customer_name}}\nPhone    : {{mobile}}\nEmail    : {{email}}\nService  : {{service}}\nClient   : {{client_name}}\nDate     : {{date}}",
+      "body_html": "",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.whatsapptemplate",
+    "pk": 1,
+    "fields": {
+      "name": "Inquiry — User Confirmation",
+      "trigger": "inquiry_customer_confirmation",
+      "template_body": "Namaste {{customer_name}}!\n\n{{company_name}} mein aapka swagat hai.\nAapki *{{category}}* inquiry humne receive kar li hai.\n\nHum aapko jald contact karenge.\nKoi sawaal ho to WhatsApp karein: {{whatsapp_number}}\n\nDhanyawad!",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.whatsapptemplate",
+    "pk": 2,
+    "fields": {
+      "name": "Inquiry — Admin Notification",
+      "trigger": "inquiry_admin_notification",
+      "template_body": "New Inquiry Alert!\n\nName: {{customer_name}}\nPhone: {{mobile}}\nService: {{service}}\nCategory: {{category}}\nDate: {{date}}",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.whatsapptemplate",
+    "pk": 3,
+    "fields": {
+      "name": "Referral — Referrer Confirmation",
+      "trigger": "referral_customer_confirmation",
+      "template_body": "Namaste {{customer_name}}!\n\nAapka referral {{company_name}} mein receive ho gaya hai.\nService: *{{service}}*\n\nHum jald aapse contact karenge.\nDhanyawad!",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.whatsapptemplate",
+    "pk": 4,
+    "fields": {
+      "name": "Referral — Admin Notification",
+      "trigger": "referral_admin_notification",
+      "template_body": "New Referral Alert!\n\nReferrer: {{customer_name}}\nPhone: {{mobile}}\nService: {{service}}\nClient: {{client_name}}\nDate: {{date}}",
+      "is_active": true,
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  }
+]

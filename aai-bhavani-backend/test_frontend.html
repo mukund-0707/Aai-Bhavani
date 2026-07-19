@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aai Bhavani — API Tester</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #e0e0e0; }
+
+    header {
+      background: #1a1a2e; padding: 16px 24px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 2px solid #C8973B;
+    }
+    header h1 { font-size: 20px; color: #C8973B; }
+    header span { font-size: 13px; color: #888; }
+
+    .layout { display: grid; grid-template-columns: 240px 1fr; height: calc(100vh - 57px); }
+
+    /* Sidebar */
+    .sidebar {
+      background: #141414; border-right: 1px solid #2a2a2a;
+      overflow-y: auto; padding: 12px 0;
+    }
+    .sidebar-section { padding: 8px 16px 4px; font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+    .sidebar button {
+      width: 100%; text-align: left; background: none; border: none;
+      padding: 9px 20px; color: #bbb; cursor: pointer; font-size: 13px;
+      border-left: 3px solid transparent; transition: all 0.15s;
+    }
+    .sidebar button:hover { background: #1e1e1e; color: #fff; }
+    .sidebar button.active { background: #1e1e2e; color: #C8973B; border-left-color: #C8973B; }
+
+    /* Main */
+    .main { display: flex; flex-direction: column; overflow: hidden; }
+
+    .toolbar {
+      background: #1a1a1a; padding: 12px 20px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid #2a2a2a; flex-wrap: wrap;
+    }
+    .url-display {
+      flex: 1; background: #0d0d0d; border: 1px solid #333;
+      padding: 8px 12px; border-radius: 6px; font-size: 13px;
+      color: #C8973B; font-family: monospace; min-width: 200px;
+    }
+    .method-badge {
+      background: #C8973B; color: #000; padding: 4px 10px;
+      border-radius: 4px; font-size: 12px; font-weight: bold;
+    }
+    .method-badge.post { background: #4CAF50; }
+    .btn {
+      padding: 8px 16px; border-radius: 6px; border: none;
+      cursor: pointer; font-size: 13px; font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: #C8973B; color: #000; }
+    .btn-danger  { background: #e74c3c; color: #fff; }
+    .btn-info    { background: #3498db; color: #fff; }
+
+    /* Login bar */
+    .login-bar {
+      background: #111; padding: 10px 20px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid #2a2a2a; font-size: 13px;
+    }
+    .login-bar input {
+      background: #1a1a1a; border: 1px solid #333; color: #fff;
+      padding: 6px 10px; border-radius: 4px; font-size: 13px; width: 160px;
+    }
+    #auth-status { font-size: 12px; }
+    #auth-status.ok { color: #4CAF50; }
+    #auth-status.no { color: #e74c3c; }
+
+    /* Body / Response area */
+    .content-area { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
+
+    /* POST body input */
+    #post-body-section {
+      background: #111; padding: 10px 20px;
+      border-bottom: 1px solid #2a2a2a; display: none;
+    }
+    #post-body-section label { font-size: 12px; color: #888; display: block; margin-bottom: 6px; }
+    #post-body {
+      width: 100%; height: 120px; background: #0d0d0d; border: 1px solid #333;
+      color: #e0e0e0; padding: 10px; border-radius: 6px;
+      font-family: monospace; font-size: 12px; resize: vertical;
+    }
+
+    /* Response */
+    .response-area { flex: 1; overflow-y: auto; padding: 20px; }
+    #status-line {
+      font-size: 13px; margin-bottom: 12px; padding: 8px 14px;
+      border-radius: 6px; display: inline-block;
+    }
+    .status-ok  { background: #1a3a1a; color: #4CAF50; }
+    .status-err { background: #3a1a1a; color: #e74c3c; }
+    .status-loading { background: #1a1a3a; color: #3498db; }
+
+    pre {
+      background: #0d0d0d; border: 1px solid #222;
+      border-radius: 8px; padding: 16px;
+      font-size: 12px; line-height: 1.6;
+      overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+      color: #a8d8a8;
+    }
+
+    /* Cards for pretty view */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .card {
+      background: #1a1a1a; border: 1px solid #2a2a2a;
+      border-radius: 8px; padding: 14px; font-size: 13px;
+    }
+    .card h3 { color: #C8973B; margin-bottom: 6px; font-size: 15px; }
+    .card p  { color: #999; line-height: 1.5; font-size: 12px; }
+    .card .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 10px;
+      font-size: 11px; margin-top: 8px; background: #2a2a2a; color: #C8973B;
+    }
+
+    .tabs { display: flex; gap: 4px; padding: 10px 20px 0; background: #141414; border-bottom: 1px solid #2a2a2a; }
+    .tab { padding: 8px 16px; border-radius: 6px 6px 0 0; cursor: pointer; font-size: 13px; background: #1a1a1a; color: #888; border: 1px solid #2a2a2a; border-bottom: none; }
+    .tab.active { background: #0d0d0d; color: #C8973B; border-color: #333; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🏠 Aai Bhavani Consultant</h1>
+  <span>— API Test Dashboard</span>
+  <span style="margin-left:auto; color: #555;">Backend: <span style="color:#4CAF50">http://localhost:8000</span></span>
+</header>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-section">CMS</div>
+    <button onclick="loadAPI('GET', '/api/cms/site-settings/', 'Site Settings')" id="btn-site-settings">Site Settings</button>
+    <button onclick="loadAPI('GET', '/api/cms/page-layout/?page=home', 'Page Layout')" id="btn-page-layout">Page Layout</button>
+    <button onclick="loadAPI('GET', '/api/cms/hero/', 'Hero Section')" id="btn-hero">Hero Section</button>
+    <button onclick="loadAPI('GET', '/api/cms/navigation/', 'Navigation')" id="btn-navigation">Navigation</button>
+    <button onclick="loadAPI('GET', '/api/cms/seo/?page=home', 'SEO - Home')" id="btn-seo">SEO Settings</button>
+    <button onclick="loadAPI('GET', '/api/cms/dashboard/stats/', 'Dashboard Stats')" id="btn-stats">Dashboard Stats</button>
+
+    <div class="sidebar-section">Business</div>
+    <button onclick="loadAPI('GET', '/api/services/', 'Services')" id="btn-services">Services</button>
+    <button onclick="loadAPI('GET', '/api/referral-program/', 'Referral Program')" id="btn-referral-prog">Referral Program</button>
+    <button onclick="loadAPI('GET', '/api/properties/', 'Properties')" id="btn-properties">Properties</button>
+    <button onclick="loadAPI('GET', '/api/gallery/', 'Gallery')" id="btn-gallery">Gallery</button>
+    <button onclick="loadAPI('GET', '/api/testimonials/', 'Testimonials')" id="btn-testimonials">Testimonials</button>
+    <button onclick="loadAPI('GET', '/api/team/', 'Team Members')" id="btn-team">Team Members</button>
+    <button onclick="loadAPI('GET', '/api/faqs/', 'FAQs')" id="btn-faqs">FAQs</button>
+
+    <div class="sidebar-section">Inquiries</div>
+    <button onclick="loadAPI('GET', '/api/inquiries/categories/', 'Inquiry Categories')" id="btn-inq-cats">📋 Inquiry Categories</button>
+    <button onclick="loadPostAPI('/api/inquiries/', 'Submit Inquiry', inquiryBody)" id="btn-inquiry">📩 Submit Inquiry (POST)</button>
+    <button onclick="loadAPI('GET', '/api/inquiries/', 'All Inquiries (Admin)')" id="btn-inquiries-list">🔐 All Inquiries (Admin)</button>
+
+    <div class="sidebar-section">Referrals</div>
+    <button onclick="loadPostAPI('/api/referrals/', 'Submit Referral', referralBody)" id="btn-referral">📩 Submit Referral (POST)</button>
+
+    <div class="sidebar-section">Templates (Admin)</div>
+    <button onclick="loadAPI('GET', '/api/cms/email-templates/', 'Email Templates')" id="btn-email-tpl">📧 Email Templates</button>
+    <button onclick="loadAPI('GET', '/api/cms/whatsapp-templates/', 'WhatsApp Templates')" id="btn-wa-tpl">💬 WhatsApp Templates</button>
+
+    <div class="sidebar-section">Admin Auth</div>
+    <button onclick="loadAPI('GET', '/admin/', 'Django Admin')" id="btn-admin">⚙️ Django Admin ↗</button>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Login Bar -->
+    <div class="login-bar">
+      <span style="color:#888">Admin Login:</span>
+      <input type="text"     id="username" placeholder="Username" value="admin">
+      <input type="password" id="password" placeholder="Password">
+      <button class="btn btn-primary" onclick="doLogin()">Login</button>
+      <button class="btn btn-danger"  onclick="doLogout()">Logout</button>
+      <span id="auth-status" class="no">● Not logged in</span>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <span id="method-badge" class="method-badge">GET</span>
+      <div class="url-display" id="url-display">← Select an endpoint from sidebar</div>
+      <button class="btn btn-primary" onclick="runRequest()" id="run-btn" disabled>▶ Run</button>
+      <button class="btn btn-info"    onclick="clearResponse()">Clear</button>
+    </div>
+
+    <!-- POST Body -->
+    <div id="post-body-section">
+      <label>Request Body (JSON):</label>
+      <textarea id="post-body"></textarea>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('raw')">Raw JSON</div>
+      <div class="tab" onclick="switchTab('pretty')">Pretty View</div>
+    </div>
+
+    <!-- Response -->
+    <div class="content-area">
+      <div class="response-area">
+        <div id="status-line"></div>
+        <div id="tab-raw" class="tab-content active">
+          <pre id="response-output">Select an endpoint from the sidebar to get started.</pre>
+        </div>
+        <div id="tab-pretty" class="tab-content">
+          <div id="pretty-output"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const BASE = 'http://localhost:8000';
+  let token = localStorage.getItem('ab_token') || null;
+  let currentMethod = 'GET';
+  let currentURL    = '';
+  let currentData   = null;
+
+  // Sample POST bodies
+  const inquiryBody = JSON.stringify({
+    name: "Test User",
+    phone: "9876543210",
+    email: "test@example.com",
+    category: 1,
+    message: "Mujhe 2BHK property chahiye Pune mein"
+  }, null, 2);
+
+  const referralBody = JSON.stringify({
+    referrer_name: "Ramesh Patil",
+    referrer_phone: "9876543210",
+    referrer_email: "ramesh@example.com",
+    client_name: "Suresh Kumar",
+    client_phone: "9123456789",
+    service_type: "property"
+  }, null, 2);
+
+  // Update auth status on load
+  updateAuthStatus();
+
+  function updateAuthStatus() {
+    const el = document.getElementById('auth-status');
+    if (token) {
+      el.textContent = '● Logged in';
+      el.className = 'ok';
+    } else {
+      el.textContent = '● Not logged in';
+      el.className = 'no';
+    }
+  }
+
+  async function doLogin() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    if (!password) { alert('Password daalo!'); return; }
+
+    setStatus('loading', 'Logging in...');
+    try {
+      const res = await fetch(BASE + '/api/auth/login/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (data.access) {
+        token = data.access;
+        localStorage.setItem('ab_token', token);
+        updateAuthStatus();
+        setStatus('ok', '✓ Login successful!');
+        showJSON(data);
+      } else {
+        setStatus('err', '✗ Login failed');
+        showJSON(data);
+      }
+    } catch(e) {
+      setStatus('err', '✗ Server not reachable — runserver chala raha hai?');
+    }
+  }
+
+  function doLogout() {
+    token = null;
+    localStorage.removeItem('ab_token');
+    updateAuthStatus();
+    setStatus('err', 'Logged out');
+    document.getElementById('response-output').textContent = 'Logged out.';
+  }
+
+  function loadAPI(method, url, label) {
+    currentMethod = method;
+    currentURL    = url;
+    currentData   = null;
+    document.getElementById('method-badge').textContent = method;
+    document.getElementById('method-badge').className   = 'method-badge' + (method === 'POST' ? ' post' : '');
+    document.getElementById('url-display').textContent  = BASE + url;
+    document.getElementById('run-btn').disabled = false;
+    document.getElementById('post-body-section').style.display = 'none';
+    document.getElementById('response-output').textContent = 'Press ▶ Run to fetch...';
+    document.getElementById('pretty-output').innerHTML = '';
+    document.getElementById('status-line').textContent = '';
+
+    // Sidebar active state
+    document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // If admin url, open directly
+    if (url === '/admin/') { window.open(BASE + url, '_blank'); return; }
+  }
+
+  function loadPostAPI(url, label, body) {
+    loadAPI('POST', url, label);
+    document.getElementById('method-badge').textContent = 'POST';
+    document.getElementById('method-badge').className   = 'method-badge post';
+    document.getElementById('post-body-section').style.display = 'block';
+    document.getElementById('post-body').value = body;
+  }
+
+  async function runRequest() {
+    if (!currentURL) return;
+
+    setStatus('loading', '⏳ Loading...');
+    document.getElementById('response-output').textContent = 'Loading...';
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+
+    const options = { method: currentMethod, headers };
+    if (currentMethod === 'POST') {
+      try {
+        options.body = document.getElementById('post-body').value;
+        JSON.parse(options.body); // validate
+      } catch(e) {
+        setStatus('err', '✗ Invalid JSON in body');
+        return;
+      }
+    }
+
+    try {
+      const start = Date.now();
+      const res   = await fetch(BASE + currentURL, options);
+      const ms    = Date.now() - start;
+      const data  = await res.json();
+
+      if (res.ok) {
+        setStatus('ok', `✓ ${res.status} ${res.statusText} — ${ms}ms`);
+      } else {
+        setStatus('err', `✗ ${res.status} ${res.statusText} — ${ms}ms`);
+      }
+
+      showJSON(data);
+      renderPretty(data, currentURL);
+
+    } catch(e) {
+      setStatus('err', '✗ Network Error — Backend chal raha hai? (uv run python manage.py runserver)');
+      document.getElementById('response-output').textContent = e.toString();
+    }
+  }
+
+  function showJSON(data) {
+    document.getElementById('response-output').textContent = JSON.stringify(data, null, 2);
+  }
+
+  function renderPretty(data, url) {
+    const container = document.getElementById('pretty-output');
+    container.innerHTML = '';
+
+    const list = Array.isArray(data) ? data : (data.results || (Array.isArray(data) ? data : null));
+
+    if (!list) {
+      // Single object — key-value table
+      container.innerHTML = renderObject(data);
+      return;
+    }
+
+    if (list.length === 0) {
+      container.innerHTML = '<p style="color:#888; padding:20px">No data found. Admin mein data add karo ya fixtures load karo.</p>';
+      return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'cards-grid';
+    list.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = renderCard(item, url);
+      grid.appendChild(card);
+    });
+    container.appendChild(grid);
+  }
+
+  function renderCard(item, url) {
+    if (url.includes('services')) {
+      return `<h3>${item.title || item.name}</h3>
+              <p>${item.short_description || item.description || ''}</p>
+              <span class="badge">${item.is_active ? '✓ Active' : '✗ Inactive'}</span>
+              <span class="badge">Order: ${item.order}</span>`;
+    }
+    if (url.includes('navigation')) {
+      return `<h3>${item.label}</h3>
+              <p>Link: ${item.link}</p>
+              <span class="badge">Order: ${item.order}</span>
+              <span class="badge">${item.is_visible ? '👁 Visible' : '🚫 Hidden'}</span>`;
+    }
+    if (url.includes('testimonials')) {
+      return `<h3>${item.client_name}</h3>
+              <p>${'★'.repeat(item.rating)}${'☆'.repeat(5 - item.rating)}</p>
+              <p>${item.review}</p>
+              <span class="badge">${item.location}</span>`;
+    }
+    if (url.includes('faqs')) {
+      return `<h3>${item.question}</h3>
+              <p>${item.answer}</p>
+              <span class="badge">${item.category || 'general'}</span>`;
+    }
+    if (url.includes('page-layout')) {
+      return `<h3>${item.section_type.toUpperCase()}</h3>
+              <p>Page: ${item.page}</p>
+              <span class="badge">Order: ${item.order}</span>
+              <span class="badge">${item.is_visible ? '👁 Visible' : '🚫 Hidden'}</span>`;
+    }
+    // Generic
+    const title = item.title || item.name || item.label || item.question || item.client_name || `ID: ${item.id}`;
+    const desc  = item.description || item.short_description || item.answer || item.review || item.meta_description || '';
+    return `<h3>${title}</h3><p>${String(desc).slice(0, 120)}${desc.length > 120 ? '...' : ''}</p>`;
+  }
+
+  function renderObject(obj) {
+    if (!obj || typeof obj !== 'object') return `<pre>${obj}</pre>`;
+    let html = '<table style="border-collapse:collapse; width:100%; font-size:13px;">';
+    for (const [k, v] of Object.entries(obj)) {
+      const val = typeof v === 'object' ? JSON.stringify(v) : String(v);
+      html += `<tr>
+        <td style="padding:8px 12px; color:#C8973B; background:#1a1a1a; border:1px solid #2a2a2a; width:180px; font-weight:600">${k}</td>
+        <td style="padding:8px 12px; background:#111; border:1px solid #2a2a2a; color:#ccc; word-break:break-all">${val}</td>
+      </tr>`;
+    }
+    html += '</table>';
+    return html;
+  }
+
+  function setStatus(type, msg) {
+    const el = document.getElementById('status-line');
+    el.textContent  = msg;
+    el.className    = type === 'ok' ? 'status-ok' : (type === 'err' ? 'status-err' : 'status-loading');
+  }
+
+  function clearResponse() {
+    document.getElementById('response-output').textContent = '';
+    document.getElementById('pretty-output').innerHTML = '';
+    document.getElementById('status-line').textContent = '';
+    document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
+  }
+
+  function switchTab(name) {
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      t.classList.toggle('active', (i === 0 && name === 'raw') || (i === 1 && name === 'pretty'));
+    });
+    document.getElementById('tab-raw').classList.toggle('active', name === 'raw');
+    document.getElementById('tab-pretty').classList.toggle('active', name === 'pretty');
+  }
+
+  // Auto-run Site Settings on load
+  window.onload = () => {
+    setTimeout(() => {
+      loadAPI('GET', '/api/cms/site-settings/', 'Site Settings');
+      document.getElementById('btn-site-settings').classList.add('active');
+      runRequest();
+    }, 300);
+  };
+</script>
+
+</body>
+</html>
