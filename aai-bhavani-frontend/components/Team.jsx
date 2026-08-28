@@ -27,7 +27,7 @@ export default function Team() {
             </h2>
           </div>
           <p className="sechead__lede">
-            Small team, direct communication. Every service has an owner —
+            Small team, direct communication. Every service has an owner and
             you never have to repeat your story to a different person.
           </p>
         </motion.div>

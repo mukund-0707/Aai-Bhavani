@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { SERVICES, CATEGORIES, SITE } from '../data/siteData';
 
@@ -21,6 +21,19 @@ export default function Contact() {
 
   const categories = CATEGORIES[selService] ?? [];
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  // Services ke Enquire button se custom event aata hai — real-time service select karo
+  useEffect(() => {
+    const handler = (e) => {
+      const slug = e.detail;
+      if (slug && SERVICES.find((s) => s.slug === slug)) {
+        setSelService(slug);
+        setForm((f) => ({ ...f, category: '' }));
+      }
+    };
+    window.addEventListener('select-service', handler);
+    return () => window.removeEventListener('select-service', handler);
+  }, []);
 
   function validate() {
     const errs = {};
@@ -58,8 +71,7 @@ export default function Contact() {
             Let's start with<br />one call.
           </h2>
           <p className="sechead__lede">
-            Fill in the form — our team will get back to you the same working
-            day. In a hurry? WhatsApp us directly.
+            Fill in the form and our team will get back to you shortly. In a hurry? WhatsApp us directly.
           </p>
 
           <ul className="contact__list">
@@ -127,7 +139,7 @@ export default function Contact() {
                   value={form.category}
                   onChange={set('category')}
                 >
-                  <option value="">— Select category —</option>
+                  <option value="">Select category</option>
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.name}>{cat.name}</option>
                   ))}
@@ -197,7 +209,7 @@ export default function Contact() {
                 <ArrowRight size={15} strokeWidth={1.7} aria-hidden="true" />
               </span>
             </button>
-            <p className="form__demo">Demo site — data is not saved.</p>
+            <p className="form__demo">Demo site. Data is not saved.</p>
 
             {/* Success overlay */}
             {submitted && (

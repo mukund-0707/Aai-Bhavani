@@ -44,7 +44,24 @@ function SvcCard({ svc, index, inView }) {
         {lbl ? (
           <span className="svc__ref"><i aria-hidden="true" />{lbl}</span>
         ) : <span />}
-        <a className="svc__link" href="#contact" aria-label={`Enquire about ${svc.title}`}>
+        <a
+          className="svc__link"
+          href={`#contact`}
+          aria-label={`Enquire about ${svc.title}`}
+          onClick={(e) => {
+            e.preventDefault();
+            // Custom event fire karo — Contact component isko sun raha hai
+            window.dispatchEvent(new CustomEvent('select-service', { detail: svc.slug }));
+            // Form pe directly scroll karo (section heading skip)
+            const form = document.getElementById('inquiry-form');
+            const el   = form || document.getElementById('contact');
+            if (!el) return;
+            const nav  = document.querySelector('header');
+            const navH = nav ? nav.getBoundingClientRect().height : 70;
+            const rect = el.getBoundingClientRect();
+            window.scrollTo({ top: rect.top + window.scrollY - navH - 16, behavior: 'smooth' });
+          }}
+        >
           Enquire <ArrowRight size={14} strokeWidth={1.7} aria-hidden="true" />
         </a>
       </div>
@@ -74,7 +91,7 @@ export default function Services() {
             Everything you need,<br /><span className="text-gold">one trusted team.</span>
           </h2>
           <p className="sechead__lede">
-            Property, loans, interiors, referrals and digital marketing — each service has a dedicated specialist working for you.
+            From expert guidance to end-to-end execution, every service is handled by a dedicated specialist.
           </p>
         </motion.div>
 

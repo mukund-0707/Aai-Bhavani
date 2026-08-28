@@ -32,7 +32,7 @@ export default function Footer() {
                 </span>
               </span>
             </a>
-            <p>Your property dreams, our responsibility. Property, loan, interiors and digital marketing — Surat and beyond.</p>
+            <p>Trusted solutions across property, finance, interiors and more. Surat and beyond.</p>
             <div className="socials" aria-label="Social media">
               <a href="#" aria-label="Facebook">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H16.7V3.6A22 22 0 0 0 14.3 3.5c-2.4 0-4 1.45-4 4.1v2.3H7.6V13h2.7v8Z" /></svg>

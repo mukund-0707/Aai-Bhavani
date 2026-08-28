@@ -20,8 +20,7 @@ export default function FAQ() {
             Frequently<br />asked questions.
           </h2>
           <p className="sechead__lede">
-            Still have questions? WhatsApp us directly — same-day response
-            guaranteed.
+            Still have questions? WhatsApp us directly and our team will help.
           </p>
         </header>
 

@@ -136,7 +136,7 @@ export default function Properties() {
             <h2 className="h2">Featured <span className="text-gold">properties</span></h2>
           </div>
           <p className="sechead__lede">
-            Sale, rent, commercial and plots — all in one place. Use filters to find what fits your budget.
+            Sale, rent, commercial and plots. All in one place. Use filters to find what fits your budget.
           </p>
         </motion.div>
 

@@ -8,7 +8,7 @@ const STEPS = [
   {
     n: '01',
     title: 'Submit a name',
-    body: 'Fill the form below — just the client\'s name and number.',
+    body: "Fill the form below. Just the client's name and number.",
   },
   {
     n: '02',
@@ -79,7 +79,7 @@ export default function Referral() {
         <div className="referral__left">
           <header className="sechead reveal">
             <p className="eyebrow eyebrow--gold"><i />Referral Program</p>
-            <h2 className="h2">Refer someone.<br />Deal closes — you earn.</h2>
+            <h2 className="h2">Refer someone.<br />They deal. You earn.</h2>
             <p className="sechead__lede">
               Know someone looking for a property or a loan? Share their name.
               We handle everything else.
@@ -201,7 +201,7 @@ export default function Referral() {
                 <ArrowRight size={15} strokeWidth={1.7} aria-hidden="true" />
               </span>
             </button>
-            <p className="form__demo">Demo site — data is not saved.</p>
+            <p className="form__demo">Demo site. Data is not saved.</p>
 
             {/* Success overlay */}
             {submitted && (

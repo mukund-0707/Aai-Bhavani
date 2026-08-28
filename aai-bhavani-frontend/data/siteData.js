@@ -23,7 +23,7 @@ export const SERVICES = [
     slug: 'property-consultant',
     icon: 'home',
     short_description:
-      'Buy, sell or rent — expert guidance from property search to paperwork and legal checks.',
+      'Buy, sell or rent. Expert guidance from property search to paperwork and legal checks.',
     tags: ['Site visits', 'Rate negotiation', 'Legal check'],
     order: 1,
     is_referral_enabled: true,
@@ -37,7 +37,7 @@ export const SERVICES = [
     slug: 'loan',
     icon: 'bank',
     short_description:
-      'Home loan, business loan or balance transfer — best rate, quick sanction.',
+      'Home loan, business loan or balance transfer. Best rate, quick sanction.',
     tags: ['Eligibility check', 'Documentation', 'Fast sanction'],
     order: 2,
     is_referral_enabled: true,
@@ -51,7 +51,7 @@ export const SERVICES = [
     slug: 'interior-design',
     icon: 'palette',
     short_description:
-      'Home or office — 3D design to handover, within budget and on schedule.',
+      'Home or office. 3D design to handover, within budget and on schedule.',
     tags: ['3D design', 'Modular kitchen', 'Turnkey'],
     order: 3,
     is_referral_enabled: false,
@@ -65,7 +65,7 @@ export const SERVICES = [
     slug: 'referral-programs',
     icon: 'users',
     short_description:
-      'Refer a client and earn commission when the deal closes — profit share or flat payout.',
+      'Refer a client and earn commission when the deal closes. Profit share or flat payout.',
     tags: ['Profit share', 'Flat payout', 'Live status'],
     order: 4,
     is_referral_enabled: false,
@@ -79,7 +79,7 @@ export const SERVICES = [
     slug: 'digital-marketing',
     icon: 'megaphone',
     short_description:
-      'Builder or local business — grow leads through social media, SEO and paid ads.',
+      'Builder or local business. Grow leads through social media, SEO and paid ads.',
     tags: ['Social media', 'SEO', 'Paid ads'],
     order: 5,
     is_referral_enabled: false,
@@ -268,7 +268,7 @@ export const FAQS = [
     id: 1,
     question: 'Is there any charge for the property search service?',
     answer:
-      'No advance charge for site visits, shortlisting or rate negotiation. Brokerage applies only when the deal is finalised — and the rate is disclosed upfront in writing.',
+      'No advance charge for site visits, shortlisting or rate negotiation. Brokerage applies only when the deal is finalised and the rate is disclosed upfront in writing.',
   },
   {
     id: 2,
@@ -280,7 +280,7 @@ export const FAQS = [
     id: 3,
     question: 'How and when is referral commission paid?',
     answer:
-      'Commission is transferred once the deal closes and payment is received — 50% profit share for Property Consulting and flat ₹5,000 for Loan. You can check the status anytime on WhatsApp.',
+      'Commission is transferred once the deal closes and payment is received. 50% profit share for Property Consulting and flat ₹5,000 for Loan. You can check the status anytime on WhatsApp.',
   },
   {
     id: 4,
@@ -292,7 +292,7 @@ export const FAQS = [
     id: 5,
     question: 'What is the payment schedule for interior projects?',
     answer:
-      'Standard 3-stage: 30% on design approval, 40% on material procurement, 30% on handover. Each stage scope is defined in a written quotation — no hidden costs.',
+      'Standard 3-stage: 30% on design approval, 40% on material procurement, 30% on handover. Each stage scope is defined in a written quotation with no hidden costs.',
   },
 ];
 

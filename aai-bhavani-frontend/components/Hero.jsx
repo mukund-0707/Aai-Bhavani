@@ -95,24 +95,24 @@ export default function Hero() {
         <h1 className="h1">
           <span className="h1__mask">
             <motion.span className="h1__rise" custom={0.16} variants={rise} initial="hidden" animate="visible">
-              <span className="text-soft">Your property,</span>
+              <span className="text-soft">Find it. Finance it.</span>
             </motion.span>
           </span>
           <span className="h1__mask">
             <motion.span className="h1__rise" custom={0.28} variants={rise} initial="hidden" animate="visible">
-              <span className="text-soft">loan &amp; interiors —</span>
+              <span className="text-soft">Design it. Build it.</span>
             </motion.span>
           </span>
           <span className="h1__mask">
             <motion.span className="h1__rise h1__line" custom={0.42} variants={rise} initial="hidden" animate="visible">
-              <span className="text-gold">one roof.</span>
+              <span className="text-gold">One trusted partner.</span>
             </motion.span>
           </span>
         </h1>
 
         {/* Sub-headline */}
         <motion.p className="hero__sub" custom={0.5} variants={rise} initial="hidden" animate="visible">
-          Property · Loans · Interiors · Digital Marketing
+          Trusted expertise and solutions, brought together under one roof.
         </motion.p>
 
         {/* CTAs */}
@@ -130,7 +130,7 @@ export default function Hero() {
             }}
             className="btn btn--solid"
           >
-            <span>Book a Call</span>
+            <span>Talk to an Expert</span>
             <span className="btn__icon">
               <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h10.2M10.4 5.6 15.2 10l-4.8 4.4" /></svg>
             </span>
@@ -155,8 +155,7 @@ export default function Hero() {
         {/* Lede + Stats */}
         <div className="hero__foot">
           <motion.p className="hero__lede" custom={0.68} variants={rise} initial="hidden" animate="visible">
-            From finding the perfect home to loans, interiors, and digital marketing —
-            AB Groups is with you at every step. Refer a client and earn commission too.
+            Whatever you're looking to achieve, our team brings the right expertise and support to help you move forward.
           </motion.p>
           <ul className="stats" aria-label="Key numbers">
             {STATS.map((s, i) => <Stat key={i} stat={s} index={i} />)}

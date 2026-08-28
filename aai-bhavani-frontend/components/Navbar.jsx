@@ -197,7 +197,7 @@ export default function Navbar() {
                 whiteSpace:'nowrap',
               }}
             >
-              Book a Call
+              Book a call
               <span style={{
                 width:30, height:30, borderRadius:999,
                 background:'rgba(0,0,0,0.15)',
@@ -310,7 +310,7 @@ export default function Navbar() {
                   boxShadow:'0 8px 28px -8px rgba(224,165,38,0.65)',
                 }}
               >
-                Book a Call
+                Book a call
                 <ArrowUpRight size={16} />
               </motion.a>
 
@@ -325,7 +325,7 @@ export default function Navbar() {
               <div style={{ display:'flex', alignItems:'center', gap:10, opacity:0.35, marginTop:8 }}>
                 <LogoMark size={32} />
                 <span style={{ fontSize:'0.6rem', letterSpacing:'0.28em', textTransform:'uppercase', color:'rgba(255,255,255,0.6)' }}>
-                  Trusted Values. Future Vision.
+                  Building Trust. Creating Possibilities.
                 </span>
               </div>
             </motion.div>
