@@ -54,3 +54,7 @@ next-env.d.ts
 /public/file.svg
 /public/globe.svg
 /public/window.svg
+
+# AI agent instruction files — dev-only, not for production repo
+AGENTS.md
+CLAUDE.md

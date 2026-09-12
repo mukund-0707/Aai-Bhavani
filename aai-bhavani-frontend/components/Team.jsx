@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { TEAM } from '../data/siteData';
 
 function initials(name) {
@@ -9,15 +9,17 @@ function initials(name) {
 }
 
 export default function Team() {
-  const ref    = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const ref            = useRef(null);
+  const inView         = useInView(ref, { once: true, margin: '-80px' });
+  const prefersReduced = useReducedMotion();
 
   return (
     <section className="section section--ink2" id="about" ref={ref}>
       <div className="shell">
         <motion.div
-          initial={{ opacity:0, y:22 }} animate={inView ? { opacity:1, y:0 } : {}}
-          transition={{ duration:0.75, ease:[0.22,1,0.36,1] }}
+          initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 22 }}
+          animate={inView ? { opacity:1, y:0 } : {}}
+          transition={{ duration: prefersReduced ? 0 : 0.75, ease:[0.22,1,0.36,1] }}
           className="sechead sechead--row"
         >
           <div>
@@ -37,9 +39,9 @@ export default function Team() {
             <motion.article
               key={member.id}
               className="member"
-              initial={{ opacity:0, y:28 }}
+              initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 28 }}
               animate={inView ? { opacity:1, y:0 } : {}}
-              transition={{ delay: 0.1 + i * 0.1, duration:0.7, ease:[0.22,1,0.36,1] }}
+              transition={{ delay: prefersReduced ? 0 : 0.1 + i * 0.1, duration: prefersReduced ? 0 : 0.7, ease:[0.22,1,0.36,1] }}
             >
               <div className="avatar" aria-hidden="true">{initials(member.name)}</div>
               <div>

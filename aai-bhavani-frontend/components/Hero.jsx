@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { SITE } from '../data/siteData';
-
-const VIDEO_SRC = '/hero.mp4';
 
 const STATS = [
   { count: 500,  suffix: '+',    label: 'Families settled'  },
@@ -13,13 +11,17 @@ const STATS = [
   { count: 50,   suffix: '%',    label: 'Referral share'    },
 ];
 
-const rise = {
-  hidden:  { opacity: 0, y: 32, filter: 'blur(10px)' },
-  visible: (d = 0) => ({
-    opacity: 1, y: 0, filter: 'blur(0px)',
-    transition: { delay: d, duration: 0.9, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
+function makeRise(prefersReduced) {
+  return {
+    hidden:  prefersReduced ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 32, filter: 'blur(10px)' },
+    visible: (d = 0) => ({
+      opacity: 1, y: 0, filter: 'blur(0px)',
+      transition: prefersReduced
+        ? { duration: 0 }
+        : { delay: d, duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+    }),
+  };
+}
 
 function useCountUp(target, delay = 0) {
   const [value, setValue] = useState(0);
@@ -40,7 +42,7 @@ function useCountUp(target, delay = 0) {
   return value;
 }
 
-function Stat({ stat, index }) {
+function Stat({ stat, index, rise }) {
   const v = useCountUp(stat.count, 400 + index * 80);
   return (
     <motion.li className="stat" custom={0.85 + index * 0.08} variants={rise} initial="hidden" animate="visible" style={{ '--i': index }}>
@@ -51,8 +53,10 @@ function Stat({ stat, index }) {
 }
 
 export default function Hero() {
-  const videoRef   = useRef(null);
-  const sectionRef = useRef(null);
+  const prefersReduced = useReducedMotion();
+  const rise           = makeRise(prefersReduced);
+  const videoRef       = useRef(null);
+  const sectionRef     = useRef(null);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
   const copyFade = useTransform(scrollYProgress, [0, 0.65], [1, 0]);
   const copyY    = useTransform(scrollYProgress, [0, 1], [0, 70]);
@@ -80,8 +84,7 @@ export default function Hero() {
           playsInline
           preload="auto"
         >
-          <source src="/hero.mp4" type="video/mp4" />
-          <source src="/hero2.mp4" type="video/mp4" />
+          <source src="/hero5.mp4" type="video/mp4" />
         </video>
         <div className="hero__scrim" style={{ position:'absolute', inset:0, zIndex:1 }} />
         <div className="grid-overlay" style={{ position:'absolute', inset:0, zIndex:2 }} />
@@ -158,7 +161,7 @@ export default function Hero() {
             Whatever you're looking to achieve, our team brings the right expertise and support to help you move forward.
           </motion.p>
           <ul className="stats" aria-label="Key numbers">
-            {STATS.map((s, i) => <Stat key={i} stat={s} index={i} />)}
+            {STATS.map((s, i) => <Stat key={i} stat={s} index={i} rise={rise} />)}
           </ul>
         </div>
       </motion.div>

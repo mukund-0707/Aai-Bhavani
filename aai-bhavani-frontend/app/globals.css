@@ -1,3 +1,8 @@
+/* ── Tailwind CSS ── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ═══════════════════════════════════════════════════════════════════════
    AB Groups — Premium Dark Design System 2026
    Inspired by: motionsites.ai, linear.app, vercel.com
@@ -842,7 +847,7 @@ ul, ol { list-style: none; }
 
 /* ── Forms ── */
 .card-form {
-  position: relative; background: var(--bg-2); border: 1px solid var(--border);
+  background: var(--bg-2); border: 1px solid var(--border);
   border-radius: var(--r-md);
   padding: clamp(24px, 3vw, 38px); display: flex; flex-direction: column; gap: 15px;
 }
@@ -872,19 +877,37 @@ ul, ol { list-style: none; }
 .form__submit { margin-top: 4px; align-self: flex-start; }
 .form__demo { font-size: 0.72rem; color: var(--txt-4); }
 .form__success {
-  position: absolute; inset: 0; z-index: 2;
-  background: var(--bg-2); border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
-  gap: 13px; padding: clamp(24px, 3vw, 38px);
-  animation: fadeUp 0.5s var(--ease);
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 13px;
+  animation: fadeUp 0.35s var(--ease);
 }
 .form__tick { width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: rgba(110,231,183,0.1); }
 .form__tick svg { width: 22px; height: 22px; fill: none; stroke: var(--mint); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .form__success h4 { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.026em; color: #fff; }
 .form__successmsg { font-size: 0.92rem; font-weight: 300; line-height: 1.62; color: var(--txt-3); max-width: 36ch; }
-.form__again { font-size: 0.84rem; color: var(--txt-3); text-decoration: underline; text-underline-offset: 3px; }
+.form__again {
+  font-size: 0.84rem; color: var(--txt-3);
+  text-decoration: underline; text-underline-offset: 3px;
+  background: none; border: none; padding: 0;
+  font-family: inherit; cursor: pointer; text-align: left;
+}
 .form__again:hover { color: var(--gold-400); }
+
+/* ── Success card variant (used with AnimatePresence swap) ── */
+.card-form--success {
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 0;
+  gap: 20px;
+}
+/* Success icon — lucide CheckCircle2 */
+.success__icon {
+  width: 52px; height: 52px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: rgba(110,231,183,0.1);
+  border: 1px solid rgba(110,231,183,0.2);
+  color: var(--mint); flex-shrink: 0;
+}
 
 /* ── Footer ── */
 .footer { background: var(--bg-1); border-top: 1px solid var(--border); padding: clamp(52px, 6vw, 84px) 0 0; overflow: hidden; }
@@ -935,7 +958,22 @@ ul, ol { list-style: none; }
 
 /* ═══════════════════════════════════════════════════════════════════════
    Responsive — Mobile-first, verified breakpoints
+
+   Breakpoint reference:
+     Mobile:   0 – 767px    (max-width: 767px)
+     Tablet:   768 – 1079px
+     Desktop:  1080px+      (min-width: 1080px)
    ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Navbar responsive (moved from Navbar.jsx inline <style>) ── */
+@media (min-width: 768px) {
+  .nav-desktop     { display: flex !important; }
+  .nav-mobile-only { display: none !important; }
+}
+@media (max-width: 767px) {
+  .nav-desktop     { display: none !important; }
+  .nav-mobile-only { display: flex !important; }
+}
 
 /* ── 1080px: hide phone, collapse FAQ ── */
 @media (max-width: 1080px) {
@@ -1043,13 +1081,13 @@ ul, ol { list-style: none; }
   /* Hero buttons full-width */
   .hero__actions {
     flex-direction: column;
-    width: 100%;
+    align-items: flex-start;
     gap: 10px;
   }
   .hero__actions .btn {
-    width: 100%;
     justify-content: center;
-    height: 54px;
+    height: 48px;
+    font-size: 0.875rem;
   }
 
   /* Services single col */
@@ -1185,4 +1223,107 @@ ul, ol { list-style: none; }
   }
   .js-reveal .reveal,
   .js-reveal .reveal.is-in { opacity: 1; transform: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Mobile critical fixes
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── FIX: iOS input zoom — font-size must be ≥ 16px on mobile ── */
+@media (max-width: 820px) {
+  .field input,
+  .field select,
+  .field textarea { font-size: 1rem; }
+}
+
+/* ── FIX: Hero content — center vertically, not flush to bottom ── */
+@media (max-width: 820px) {
+  .hero__inner {
+    justify-content: center;
+    padding-top: max(88px, 22svh);
+    padding-bottom: clamp(36px, 6svh, 60px);
+    min-height: 100svh;
+  }
+}
+
+/* ── FIX: hero__sub — minimum readable size on small screens ── */
+@media (max-width: 560px) {
+  .hero__sub { font-size: 0.8rem; letter-spacing: 0.04em; }
+}
+@media (max-width: 400px) {
+  .hero__sub { font-size: 0.78rem; letter-spacing: 0.03em; }
+}
+
+/* ── FIX: Aurora blobs — GPU-expensive blur, invisible behind video on mobile ── */
+@media (max-width: 820px) {
+  .aurora-blob { display: none; }
+}
+
+/* ── FIX: Submit / WA buttons — full width from 640px (not just 400px) ── */
+@media (max-width: 640px) {
+  .form__submit { width: 100%; justify-content: center; }
+  .btn--wa      { width: 100%; justify-content: center; }
+}
+
+/* ── FIX: field-row collapse at 640px (was 560px — too late) ── */
+@media (max-width: 640px) {
+  .field-row { grid-template-columns: 1fr; }
+}
+
+/* ── FIX: Contact section — form first on mobile, info second ── */
+@media (max-width: 640px) {
+  .contact { display: flex; flex-direction: column; }
+  .contact__right { order: 0; }
+  .contact__left  { order: 1; margin-top: 8px; }
+}
+
+/* ── FIX: Referral order — steps always first, form always second ── */
+@media (max-width: 900px) {
+  .referral__left  { order: 0; }
+  .referral__right { order: 1; position: static; }
+}
+
+/* ── FIX: Refcards — force single col on small phones ── */
+@media (max-width: 420px) {
+  .refcards { grid-template-columns: 1fr; }
+}
+
+/* ── FIX: Service "Enquire" touch target — minimum 44px ── */
+@media (max-width: 820px) {
+  .svc__link {
+    padding: 10px 0;
+    min-height: 44px;
+    align-items: center;
+  }
+}
+
+/* ── FIX: Hover card lifts — irrelevant on touch, cause flicker tap effect ── */
+@media (hover: none) {
+  .card-lift:hover,
+  .svc:hover,
+  .quote:hover,
+  .member:hover,
+  .refcard:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--border);
+    background: var(--bg-1);
+  }
+  .svc:hover::before, .svc:hover::after { opacity: 0; }
+
+  /* Replace with subtle press feedback */
+  .svc:active    { transform: scale(0.985); transition: transform 0.1s; }
+  .quote:active  { transform: scale(0.985); transition: transform 0.1s; }
+  .member:active { transform: scale(0.985); transition: transform 0.1s; }
+  .btn:active    { transform: scale(0.97);  transition: transform 0.1s; }
+  .svc__link:active { color: var(--gold-400); }
+}
+
+/* ── FIX: Footer phone/email nowrap ── */
+.footer__col a[href^="tel"],
+.footer__col a[href^="mailto"] { white-space: nowrap; }
+
+/* ── FIX: textarea resize on mobile ── */
+@media (max-width: 820px) {
+  .field textarea { resize: none; }
 }

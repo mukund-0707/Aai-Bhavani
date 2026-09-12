@@ -123,6 +123,9 @@ export default function Properties() {
     (!catFilter  || p.category === catFilter)
   );
 
+  // Section temporarily hidden — code preserved for future use
+  return null;
+
   return (
     <section className="section section--ink2" id="properties" ref={ref}>
       <div className="shell">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { TESTIMONIALS } from '../data/siteData';
 
@@ -10,8 +10,9 @@ function initials(name) {
 }
 
 export default function Testimonials() {
-  const ref    = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const ref            = useRef(null);
+  const inView         = useInView(ref, { once: true, margin: '-80px' });
+  const prefersReduced = useReducedMotion();
 
   return (
     <section className="section section--dark" id="testimonials" ref={ref}>
@@ -22,8 +23,9 @@ export default function Testimonials() {
 
       <div className="shell" style={{ position:'relative', zIndex:1 }}>
         <motion.div
-          initial={{ opacity:0, y:22 }} animate={inView ? { opacity:1, y:0 } : {}}
-          transition={{ duration:0.75, ease:[0.22,1,0.36,1] }}
+          initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 22 }}
+          animate={inView ? { opacity:1, y:0 } : {}}
+          transition={{ duration: prefersReduced ? 0 : 0.75, ease:[0.22,1,0.36,1] }}
           className="sechead sechead--center"
         >
           <span className="eyebrow"><i />What clients say</span>
@@ -37,9 +39,9 @@ export default function Testimonials() {
             <motion.article
               key={t.id}
               className="quote"
-              initial={{ opacity:0, y:30 }}
+              initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 30 }}
               animate={inView ? { opacity:1, y:0 } : {}}
-              transition={{ delay: 0.1 + i * 0.12, duration:0.7, ease:[0.22,1,0.36,1] }}
+              transition={{ delay: prefersReduced ? 0 : 0.1 + i * 0.12, duration: prefersReduced ? 0 : 0.7, ease:[0.22,1,0.36,1] }}
             >
               {/* Quote icon */}
               <Quote size={18} style={{ color:'var(--gold-400)', opacity:0.5 }} />

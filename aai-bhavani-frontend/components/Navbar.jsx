@@ -6,11 +6,10 @@ import { Menu, X, ArrowUpRight } from 'lucide-react';
 import { SITE } from '../data/siteData';
 
 const NAV_LINKS = [
-  { label: 'Services',   href: '#services'   },
-  { label: 'Properties', href: '#properties' },
-  { label: 'Referral',   href: '#referral'   },
-  { label: 'About',      href: '#about'      },
-  { label: 'FAQ',        href: '#faq'        },
+  { label: 'Services',  href: '#services'  },
+  { label: 'Referral',  href: '#referral'  },
+  { label: 'About',     href: '#about'     },
+  { label: 'FAQ',       href: '#faq'       },
 ];
 
 /* ── Logo mark — actual AB Groups image ── */
@@ -333,16 +332,6 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      <style>{`
-        @media (min-width: 768px) {
-          .nav-desktop { display: flex !important; }
-          .nav-mobile-only { display: none !important; }
-        }
-        @media (max-width: 767px) {
-          .nav-desktop { display: none !important; }
-          .nav-mobile-only { display: flex !important; }
-        }
-      `}</style>
     </>
   );
 }

@@ -60,7 +60,6 @@ export default function Footer() {
             <h4>Company</h4>
             <ul>
               <li><a href="#about">About us</a></li>
-              <li><a href="#properties">Properties</a></li>
               <li><a href="#referral">Referral</a></li>
               <li><a href="#testimonials">Testimonials</a></li>
               <li><a href="#faq">FAQ</a></li>
@@ -92,7 +91,7 @@ export default function Footer() {
         className="footer__wordmark"
         style={{
           pointerEvents:'none',
-          height:'clamp(40px, 7vw, 90px)',
+          height:'clamp(28px, 5vw, 64px)',
           overflow:'hidden',
           paddingInline:'clamp(18px,4vw,60px)',
           width:'100%',
@@ -100,7 +99,7 @@ export default function Footer() {
       >
         <p style={{
           fontFamily:'var(--font)',
-          fontSize:'clamp(60px, 13vw, 180px)',
+          fontSize:'clamp(40px, 8vw, 120px)',
           fontWeight:800,
           lineHeight:0.78,
           letterSpacing:'-0.055em',
