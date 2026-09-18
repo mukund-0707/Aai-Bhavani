@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
-import { SITE } from '../data/siteData';
+// site prop passed from page.js (API data)
 
 const NAV_LINKS = [
   { label: 'Services',  href: '#services'  },
@@ -26,7 +26,7 @@ function LogoMark({ size = 36 }) {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({ site }) {
   const [scrolled, setScrolled] = useState(false);
   const [open,     setOpen]     = useState(false);
   const [active,   setActive]   = useState('home');
@@ -314,10 +314,10 @@ export default function Navbar() {
               </motion.a>
 
               <div style={{ display:'flex', gap:16, alignItems:'center', paddingTop:8 }}>
-                <a href={`tel:${SITE.phone}`} style={{ fontSize:'0.9rem', color:'rgba(255,255,255,0.45)', transition:'color 0.2s' }}
+                <a href={`tel:${site.phone}`} style={{ fontSize:'0.9rem', color:'rgba(255,255,255,0.45)', transition:'color 0.2s' }}
                   onMouseEnter={e=>e.currentTarget.style.color='#f5c24c'}
                   onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.45)'}
-                >{SITE.phone}</a>
+                >{site.phone}</a>
               </div>
 
               {/* Mini logo at bottom */}

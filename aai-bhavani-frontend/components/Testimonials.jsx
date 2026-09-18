@@ -3,13 +3,13 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
-import { TESTIMONIALS } from '../data/siteData';
+// testimonials prop passed from page.js (API data)
 
 function initials(name) {
   return name.trim().split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase();
 }
 
-export default function Testimonials() {
+export default function Testimonials({ testimonials }) {
   const ref            = useRef(null);
   const inView         = useInView(ref, { once: true, margin: '-80px' });
   const prefersReduced = useReducedMotion();
@@ -35,7 +35,7 @@ export default function Testimonials() {
         </motion.div>
 
         <div className="quotes">
-          {TESTIMONIALS.map((t, i) => (
+          {testimonials.map((t, i) => (
             <motion.article
               key={t.id}
               className="quote"

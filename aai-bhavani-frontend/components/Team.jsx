@@ -2,13 +2,13 @@
 
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { TEAM } from '../data/siteData';
+// team prop passed from page.js (API data)
 
 function initials(name) {
   return name.trim().split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase();
 }
 
-export default function Team() {
+export default function Team({ team }) {
   const ref            = useRef(null);
   const inView         = useInView(ref, { once: true, margin: '-80px' });
   const prefersReduced = useReducedMotion();
@@ -35,7 +35,7 @@ export default function Team() {
         </motion.div>
 
         <div className="team">
-          {TEAM.map((member, i) => (
+          {team.map((member, i) => (
             <motion.article
               key={member.id}
               className="member"

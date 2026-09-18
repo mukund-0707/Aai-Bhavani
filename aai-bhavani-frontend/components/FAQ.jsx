@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { FAQS } from '../data/siteData';
+// faqs prop passed from page.js (API data)
 
-export default function FAQ() {
+export default function FAQ({ faqs }) {
   const [openId, setOpenId] = useState(null);
 
   function toggle(id) {
@@ -26,7 +26,7 @@ export default function FAQ() {
 
         {/* Accordion */}
         <div className="faq reveal" role="list">
-          {FAQS.map((faq) => {
+          {faqs.map((faq) => {
             const isOpen = openId === faq.id;
             return (
               <div

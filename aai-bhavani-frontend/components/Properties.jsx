@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { MapPin, BedDouble, Maximize2, ArrowUpRight } from 'lucide-react';
-import { PROPERTIES, formatPrice } from '../data/siteData';
+import { formatPrice } from '../data/siteData';
 
 const TYPE_FILTERS = [
   { value: '',     label: 'All'      },

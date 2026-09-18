@@ -3,13 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
-import { SERVICES, CATEGORIES, SITE } from '../data/siteData';
-
-function waUrl(number, message) {
-  const clean = String(number).replace(/\D/g, '');
-  const n = clean.length === 10 ? `91${clean}` : clean;
-  return `https://wa.me/${n}?text=${encodeURIComponent(message)}`;
-}
+import { apiFetch } from '../lib/api';
 
 const WaIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true" style={{ width: 19, height: 19, fill: 'currentColor', flexShrink: 0 }}>
@@ -17,32 +11,46 @@ const WaIcon = () => (
   </svg>
 );
 
-export default function Contact() {
+export default function Contact({ services, site }) {
   const [submitted, setSubmitted]   = useState(false);
   const [waLink,    setWaLink]      = useState('');
   const [errors,    setErrors]      = useState({});
-  const [selService, setSelService] = useState(SERVICES[0]?.slug ?? '');
+  const [loading,   setLoading]     = useState(false);
+  const [serverError, setServerError] = useState('');
+  const [selService, setSelService] = useState(services[0]?.slug ?? '');
+  const [categories, setCategories] = useState([]);
+  const [catLoading, setCatLoading] = useState(false);
   const [form, setForm] = useState({
     name: '', phone: '', email: '', category: '', message: '',
   });
 
-  const categories = CATEGORIES[selService] ?? [];
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
   /* Ref for scroll-into-view after submit */
   const cardRef = useRef(null);
 
+  /* Service change pe categories fetch karo */
+  useEffect(() => {
+    if (!selService) return;
+    setCatLoading(true);
+    apiFetch(`/api/inquiries/categories/?service=${selService}`)
+      .then(setCategories)
+      .catch(() => setCategories([]))
+      .finally(() => setCatLoading(false));
+  }, [selService]);
+
+  /* Services card ke "Enquire" button click pe service select */
   useEffect(() => {
     const handler = (e) => {
       const slug = e.detail;
-      if (slug && SERVICES.find((s) => s.slug === slug)) {
+      if (slug && services.find((s) => s.slug === slug)) {
         setSelService(slug);
         setForm((f) => ({ ...f, category: '' }));
       }
     };
     window.addEventListener('select-service', handler);
     return () => window.removeEventListener('select-service', handler);
-  }, []);
+  }, [services]);
 
   /* After submitted → true, scroll so the success card sits comfortably
      below the navbar. Manual offset = navbar height + breathing room.  */
@@ -65,21 +73,42 @@ export default function Contact() {
     return errs;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
+    setServerError('');
 
-    const svcLabel = SERVICES.find((s) => s.slug === selService)?.title ?? selService;
-    const msg = `Hi! I'd like to enquire about ${svcLabel}${form.category ? ` — ${form.category}` : ''}.\n\nName: ${form.name}\nPhone: ${form.phone}${form.email ? `\nEmail: ${form.email}` : ''}${form.message ? `\n\nMessage: ${form.message}` : ''}`;
-    setWaLink(waUrl(SITE.whatsapp, msg));
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      const selectedSvc = services.find(s => s.slug === selService);
+      const selectedCat = categories.find(c => c.name === form.category);
+      const payload = {
+        service:  selectedSvc?.id,
+        category: selectedCat?.id || undefined,
+        name:     form.name,
+        phone:    form.phone,
+        email:    form.email || undefined,
+        message:  form.message || undefined,
+      };
+      const data = await apiFetch('/api/inquiries/', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      setWaLink(data.whatsapp_url);
+      setSubmitted(true);
+    } catch (err) {
+      setServerError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   function reset() {
     setSubmitted(false);
     setWaLink('');
+    setServerError('');
     setForm({ name: '', phone: '', email: '', category: '', message: '' });
   }
 
@@ -100,25 +129,25 @@ export default function Contact() {
           <ul className="contact__list">
             <li>
               <span>Phone</span>
-              <a href={`tel:${SITE.phone}`}>{SITE.phone}</a>
+              <a href={`tel:${site.phone}`}>{site.phone}</a>
             </li>
             <li>
               <span>WhatsApp</span>
-              <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener noreferrer">
-                {SITE.phone}
+              <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                {site.phone}
               </a>
             </li>
             <li>
               <span>Email</span>
-              <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+              <a href={`mailto:${site.email}`}>{site.email}</a>
             </li>
             <li>
               <span>Office</span>
-              <address>{SITE.address}</address>
+              <address>{site.address}</address>
             </li>
             <li>
               <span>Hours</span>
-              <address>{SITE.working_hours}</address>
+              <address>{site.working_hours}</address>
             </li>
           </ul>
         </div>
@@ -202,13 +231,17 @@ export default function Contact() {
                       setForm((f) => ({ ...f, category: '' }));
                     }}
                   >
-                    {SERVICES.map((svc) => (
+                    {services.map((svc) => (
                       <option key={svc.id} value={svc.slug}>{svc.title}</option>
                     ))}
                   </select>
                 </div>
 
-                {categories.length > 0 && (
+                {catLoading && (
+                  <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)' }}>Loading categories…</p>
+                )}
+
+                {!catLoading && categories.length > 0 && (
                   <div className="field">
                     <label htmlFor="i-category">Category</label>
                     <select
@@ -262,13 +295,16 @@ export default function Contact() {
                   />
                 </div>
 
-                <button className="btn btn--solid form__submit" type="submit">
-                  <span>Submit Inquiry</span>
+                {serverError && (
+                  <p className="field__err" style={{ textAlign: 'center' }}>{serverError}</p>
+                )}
+
+                <button disabled={loading} className="btn btn--solid form__submit" type="submit">
+                  <span>{loading ? 'Submitting…' : 'Submit Inquiry'}</span>
                   <span className="btn__icon">
                     <ArrowRight size={15} strokeWidth={1.7} aria-hidden="true" />
                   </span>
                 </button>
-                <p className="form__demo">Demo site. Data is not saved.</p>
               </motion.form>
 
             )}

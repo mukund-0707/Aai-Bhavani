@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
-import { SERVICES, SITE, referralLabel } from '../data/siteData';
+import { apiFetch } from '../lib/api';
+import { referralLabel } from '../data/siteData';
 
 const STEPS = [
   {
@@ -23,14 +24,6 @@ const STEPS = [
   },
 ];
 
-const REFERRAL_SERVICES = SERVICES.filter((s) => s.is_referral_enabled);
-
-function waUrl(number, message) {
-  const clean = String(number).replace(/\D/g, '');
-  const n = clean.length === 10 ? `91${clean}` : clean;
-  return `https://wa.me/${n}?text=${encodeURIComponent(message)}`;
-}
-
 /* WA icon SVG */
 const WaIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true" style={{ width: 19, height: 19, fill: 'currentColor', flexShrink: 0 }}>
@@ -38,17 +31,21 @@ const WaIcon = () => (
   </svg>
 );
 
-export default function Referral() {
+export default function Referral({ services }) {
+  const referralServices = services.filter((s) => s.is_referral_enabled);
+
   const [submitted, setSubmitted] = useState(false);
   const [waLink,    setWaLink]    = useState('');
   const [errors,    setErrors]    = useState({});
-  const [form,      setForm]      = useState({
+  const [loading,   setLoading]   = useState(false);
+  const [serverError, setServerError] = useState('');
+  const [form, setForm] = useState({
     referrer_name:  '',
     referrer_phone: '',
     referrer_email: '',
     client_name:    '',
     client_phone:   '',
-    service:        REFERRAL_SERVICES[0]?.title ?? '',
+    service:        referralServices[0]?.title ?? '',
   });
 
   /* Ref to the card wrapper — used to scroll into view after submit */
@@ -64,15 +61,35 @@ export default function Referral() {
     return errs;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
+    setServerError('');
 
-    const msg = `Hi! I'd like to refer a client.\n\nReferrer: ${form.referrer_name}\nPhone: ${form.referrer_phone}\nClient: ${form.client_name}${form.client_phone ? `\nClient Phone: ${form.client_phone}` : ''}\nService: ${form.service}`;
-    setWaLink(waUrl(SITE.whatsapp, msg));
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      const selectedSvc = referralServices.find(s => s.title === form.service);
+      const payload = {
+        referrer_name:  form.referrer_name,
+        referrer_phone: form.referrer_phone,
+        referrer_email: form.referrer_email || undefined,
+        client_name:    form.client_name,
+        client_phone:   form.client_phone || undefined,
+        service:        selectedSvc?.id,
+      };
+      const data = await apiFetch('/api/referrals/', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      setWaLink(data.whatsapp_url);
+      setSubmitted(true);
+    } catch (err) {
+      setServerError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   /* After submitted → true, scroll so the success card sits comfortably
@@ -92,9 +109,10 @@ export default function Referral() {
   function reset() {
     setSubmitted(false);
     setWaLink('');
+    setServerError('');
     setForm({
       referrer_name: '', referrer_phone: '', referrer_email: '',
-      client_name: '', client_phone: '', service: REFERRAL_SERVICES[0]?.title ?? '',
+      client_name: '', client_phone: '', service: referralServices[0]?.title ?? '',
     });
   }
 
@@ -124,7 +142,7 @@ export default function Referral() {
           </ol>
 
           <div className="refcards reveal">
-            {REFERRAL_SERVICES.map((svc) => (
+            {referralServices.map((svc) => (
               <div key={svc.id} className="refcard">
                 <p className="refcard__val">{referralLabel(svc)}</p>
                 <p className="refcard__svc">{svc.title}</p>
@@ -256,19 +274,22 @@ export default function Referral() {
                 <div className="field">
                   <label htmlFor="r-service">Service</label>
                   <select id="r-service" name="service" value={form.service} onChange={set('service')}>
-                    {REFERRAL_SERVICES.map((svc) => (
+                    {referralServices.map((svc) => (
                       <option key={svc.id} value={svc.title}>{svc.title}</option>
                     ))}
                   </select>
                 </div>
 
-                <button className="btn btn--solid form__submit" type="submit">
-                  <span>Submit Referral</span>
+                {serverError && (
+                  <p className="field__err" style={{ textAlign: 'center' }}>{serverError}</p>
+                )}
+
+                <button disabled={loading} className="btn btn--solid form__submit" type="submit">
+                  <span>{loading ? 'Submitting…' : 'Submit Referral'}</span>
                   <span className="btn__icon">
                     <ArrowRight size={15} strokeWidth={1.7} aria-hidden="true" />
                   </span>
                 </button>
-                <p className="form__demo">Demo site. Data is not saved.</p>
               </motion.form>
 
             )}

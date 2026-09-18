@@ -1,6 +1,6 @@
-import { SITE, SERVICES } from '../data/siteData';
+// site and services props passed from page.js (API data)
 
-export default function Footer() {
+export default function Footer({ site, services }) {
   const year = new Date().getFullYear();
 
   return (
@@ -52,7 +52,7 @@ export default function Footer() {
           {/* Services */}
           <nav className="footer__col" aria-label="Services">
             <h4>Services</h4>
-            <ul>{SERVICES.map(s => <li key={s.id}><a href="#services">{s.title}</a></li>)}</ul>
+            <ul>{services.map(s => <li key={s.id}><a href="#services">{s.title}</a></li>)}</ul>
           </nav>
 
           {/* Company */}
@@ -70,11 +70,11 @@ export default function Footer() {
           <div className="footer__col">
             <h4>Contact</h4>
             <ul>
-              <li><a href={`tel:${SITE.phone}`}>{SITE.phone}</a></li>
-              <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
-              <li><a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-              <li>{SITE.address}</li>
-              <li>{SITE.working_hours}</li>
+              <li><a href={`tel:${site.phone}`}>{site.phone}</a></li>
+              <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+              <li><a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+              <li>{site.address}</li>
+              <li>{site.working_hours}</li>
             </ul>
           </div>
         </div>

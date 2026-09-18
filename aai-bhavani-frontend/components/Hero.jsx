@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
-import { SITE } from '../data/siteData';
+// site prop passed from page.js (API data)
 
 const STATS = [
   { count: 500,  suffix: '+',    label: 'Families settled'  },
@@ -52,7 +52,7 @@ function Stat({ stat, index, rise }) {
   );
 }
 
-export default function Hero() {
+export default function Hero({ site }) {
   const prefersReduced = useReducedMotion();
   const rise           = makeRise(prefersReduced);
   const videoRef       = useRef(null);

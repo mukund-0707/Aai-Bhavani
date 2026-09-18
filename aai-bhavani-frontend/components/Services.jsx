@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Home, Landmark, Palette, Users, Megaphone, ArrowRight } from 'lucide-react';
-import { SERVICES, referralLabel } from '../data/siteData';
+import { referralLabel } from '../data/siteData';
 
 const ICON_MAP = { home: Home, bank: Landmark, palette: Palette, users: Users, megaphone: Megaphone };
 
@@ -70,7 +70,7 @@ function SvcCard({ svc, index, inView }) {
   );
 }
 
-export default function Services() {
+export default function Services({ services }) {
   const ref            = useRef(null);
   const inView         = useInView(ref, { once: true, margin: '-80px' });
   const prefersReduced = useReducedMotion();
@@ -99,7 +99,7 @@ export default function Services() {
         </motion.div>
 
         <div className="services">
-          {SERVICES.map((svc, i) => <SvcCard key={svc.id} svc={svc} index={i} inView={inView} />)}
+          {services.map((svc, i) => <SvcCard key={svc.id} svc={svc} index={i} inView={inView} />)}
         </div>
       </div>
     </section>

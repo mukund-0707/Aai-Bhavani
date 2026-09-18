@@ -1,10 +1,10 @@
-import { SITE } from '../data/siteData';
+// whatsapp prop passed from page.js (API data)
 
-export default function WhatsAppFloat() {
+export default function WhatsAppFloat({ whatsapp }) {
   return (
     <a
       className="wa-float"
-      href={`https://wa.me/${SITE.whatsapp}`}
+      href={`https://wa.me/${whatsapp}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
