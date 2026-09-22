@@ -39,7 +39,7 @@ function SvcCard({ svc, index, inView }) {
       <h3 className="svc__title">{svc.title}</h3>
       <p className="svc__desc">{svc.short_description}</p>
       <div className="svc__tags">
-        {svc.tags.map(tag => <span key={tag} className="svc__tag">{tag}</span>)}
+        {(svc.tags ?? []).map(tag => <span key={tag} className="svc__tag">{tag}</span>)}
       </div>
       <div className="svc__foot">
         {lbl ? (
@@ -51,7 +51,7 @@ function SvcCard({ svc, index, inView }) {
           aria-label={`Enquire about ${svc.title}`}
           onClick={(e) => {
             e.preventDefault();
-            // Custom event fire karo — Contact component isko sun raha hai
+            // Fire custom event — Contact component listens for this
             window.dispatchEvent(new CustomEvent('select-service', { detail: svc.slug }));
             // Form pe directly scroll karo (section heading skip)
             const form = document.getElementById('inquiry-form');
@@ -74,6 +74,41 @@ export default function Services({ services }) {
   const ref            = useRef(null);
   const inView         = useInView(ref, { once: true, margin: '-80px' });
   const prefersReduced = useReducedMotion();
+
+  // Calculate balanced layout
+  const count = services.length;
+  let layout = [];
+  
+  if (count <= 2) {
+    layout = [count]; // [1] or [2]
+  } else if (count === 3) {
+    layout = [3]; // [3]
+  } else if (count === 4) {
+    layout = [2, 2]; // [2, 2]
+  } else if (count === 5) {
+    layout = [2, 3]; // [2, 3]
+  } else if (count === 6) {
+    layout = [2, 2, 2]; // [2, 2, 2]
+  } else if (count === 7) {
+    layout = [2, 2, 3]; // [2, 2, 3]
+  } else if (count === 8) {
+    layout = [2, 3, 3]; // [2, 3, 3]
+  } else {
+    // 9+ → rows of 3
+    const rows = Math.ceil(count / 3);
+    layout = Array(rows).fill(3);
+    // adjust last row
+    const remainder = count % 3;
+    if (remainder > 0) layout[rows - 1] = remainder;
+  }
+
+  // Build rows array
+  let idx = 0;
+  const rows = layout.map(perRow => {
+    const row = services.slice(idx, idx + perRow);
+    idx += perRow;
+    return row;
+  });
 
   return (
     <section className="section section--dark" id="services" ref={ref}>
@@ -99,7 +134,21 @@ export default function Services({ services }) {
         </motion.div>
 
         <div className="services">
-          {services.map((svc, i) => <SvcCard key={svc.id} svc={svc} index={i} inView={inView} />)}
+          {rows.map((row, rowIdx) => (
+            <div key={rowIdx} className="services__row" style={{ display: 'flex', gap: '1px' }}>
+              {row.map((svc, colIdx) => {
+                const globalIdx = services.findIndex(s => s.id === svc.id);
+                return (
+                  <div
+                    key={svc.id}
+                    style={{ flex: 1, minWidth: 0 }}
+                  >
+                    <SvcCard svc={svc} index={globalIdx} inView={inView} />
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </div>
       </div>
     </section>

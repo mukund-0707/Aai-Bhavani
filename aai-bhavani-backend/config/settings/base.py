@@ -1,5 +1,5 @@
 """
-Base settings — development.py aur production.py dono isse inherit karte hain
+Base settings — inherited by both development.py and production.py
 """
 from pathlib import Path
 import environ
@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env(DEBUG=(bool, True))
 
-# .env file hai to read karo, nahi hai to defaults use karo
+# .env file read karo if present, otherwise use defaults
 try:
     environ.Env.read_env(BASE_DIR / '.env')
 except FileNotFoundError:
@@ -81,7 +81,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# Default DB — development.py override karega SQLite se
+# Default DB — development.py will override with SQLite
 DATABASES = {
     'default': env.db(
         'DATABASE_URL',
@@ -105,7 +105,7 @@ STATIC_URL    = '/static/'
 STATIC_ROOT   = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Cloudinary — production mein override hoga
+# Cloudinary — will be overridden in production
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME', default=''),
     'API_KEY':    env('CLOUDINARY_API_KEY',    default=''),

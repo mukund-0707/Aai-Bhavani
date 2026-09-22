@@ -7,8 +7,7 @@ import StatusBadge from '../_components/StatusBadge';
 import Modal       from '../_components/Modal';
 import { useToast } from '../_components/Toast';
 import FormField, { Select, Textarea } from '../_components/FormField';
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+import { adminFetch } from '../../../lib/auth';
 
 const STATUS_OPTIONS = [
   { value: '',            label: 'All Status'   },
@@ -38,8 +37,7 @@ export default function InquiriesPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch(`${API}/api/inquiries/`);
-      const json = await res.json();
+      const json = await adminFetch(`/api/inquiries/`);
       setData(json.results ?? json ?? []);
     } catch {
       setData([]);
@@ -62,12 +60,10 @@ export default function InquiriesPage() {
     if (!selected) return;
     setSaving(true);
     try {
-      const res = await fetch(`${API}/api/inquiries/${selected.id}/`, {
+      await adminFetch(`/api/inquiries/${selected.id}/`, {
         method:  'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ status: editStatus, notes: editNotes }),
       });
-      if (!res.ok) throw new Error();
       toast('Inquiry updated successfully', 'success');
       setSelected(null);
       load();

@@ -7,8 +7,7 @@ import Link from 'next/link';
 import FormField, { Input, Textarea, Select, Toggle, FieldRow, FieldSection } from '../../_components/FormField';
 import { ConfirmModal } from '../../_components/Modal';
 import { useToast } from '../../_components/Toast';
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+import { adminFetch } from '../../../../lib/auth';
 
 const EMPTY = {
   title: '', slug: '', icon: 'home',
@@ -39,8 +38,7 @@ export default function ServiceFormPage() {
   /* Load existing service */
   useEffect(() => {
     if (isNew) return;
-    fetch(`${API}/api/services/${id}/`)
-      .then(r => r.json())
+    adminFetch(`/api/services/${id}/`)
       .then(data => {
         setForm(prev => ({ ...prev, ...data }));
         setSlugEdited(true); // slug already set — don't auto-regenerate
@@ -78,24 +76,30 @@ export default function ServiceFormPage() {
 
     setSaving(true);
     try {
-      const url    = isNew ? `${API}/api/services/` : `${API}/api/services/${form.slug}/`;
+      const url    = isNew ? `/api/services/` : `/api/services/${form.slug}/`;
       const method = isNew ? 'POST' : 'PATCH';
-      const res    = await fetch(url, {
+
+      // Clean payload — referral_value must be a number or null, not empty string
+      const payload = {
+        ...form,
+        referral_value: form.referral_value !== '' ? form.referral_value : '0',
+      };
+
+      await adminFetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
-      if (!res.ok) {
-        const data = await res.json();
-        // Map backend field errors
-        if (data && typeof data === 'object') {
-          setErrors(data);
-        }
-        throw new Error();
-      }
       toast(isNew ? 'Service created!' : 'Service updated!', 'success');
       router.push('/admin/services');
-    } catch {
+    } catch (err) {
+      // Try to extract field errors from the thrown error
+      try {
+        const data = err?.data ?? (typeof err?.message === 'string' ? JSON.parse(err.message) : null);
+        if (data && typeof data === 'object') {
+          setErrors(data);
+          return;
+        }
+      } catch {}
       if (!Object.keys(errors).length) toast('Failed to save service', 'error');
     } finally {
       setSaving(false);
@@ -105,7 +109,7 @@ export default function ServiceFormPage() {
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await fetch(`${API}/api/services/${form.slug}/`, { method: 'DELETE' });
+      await adminFetch(`/api/services/${form.slug}/`, { method: 'DELETE' });
       toast('Service deleted', 'success');
       router.push('/admin/services');
     } catch {

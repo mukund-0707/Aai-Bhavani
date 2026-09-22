@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   siteData.js — Sirf helper functions.
-   Saara static data hata diya — ab sab API se aata hai.
+   siteData.js — Helper functions only.
+   All static data removed — everything now comes from the API.
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Helper: referral label ─────────────────────────────────────────── */

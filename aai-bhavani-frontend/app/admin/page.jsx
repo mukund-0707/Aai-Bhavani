@@ -8,8 +8,7 @@ import {
 } from 'lucide-react';
 import StatCard  from './_components/StatCard';
 import StatusBadge from './_components/StatusBadge';
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+import { adminFetch } from '../../lib/auth';
 
 function timeAgo(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -31,8 +30,8 @@ export default function AdminDashboard() {
     async function load() {
       try {
         const [iq, ref] = await Promise.all([
-          fetch(`${API}/api/inquiries/`).then(r => r.ok ? r.json() : { results: [], count: 0 }),
-          fetch(`${API}/api/referrals/`).then(r => r.ok ? r.json() : { results: [], count: 0 }),
+          adminFetch(`/api/inquiries/`).catch(() => ({ results: [], count: 0 })),
+          adminFetch(`/api/referrals/`).catch(() => ({ results: [], count: 0 })),
         ]);
         setInquiries(iq.results ?? iq ?? []);
         setReferrals(ref.results ?? ref ?? []);

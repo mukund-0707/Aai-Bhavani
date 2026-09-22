@@ -6,7 +6,8 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model  = SiteSettings
         fields = [
-            'site_name', 'site_tagline', 'logo', 'favicon',
+            'site_name', 'site_tagline',
+            'logo', 'favicon',
             'phone', 'whatsapp', 'email', 'address',
             'google_map_url', 'working_hours',
             'facebook_url', 'instagram_url', 'linkedin_url', 'youtube_url',
@@ -14,7 +15,7 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             'hero_image', 'hero_button_text', 'hero_button_link',
             'updated_at',
         ]
-        read_only_fields = ['updated_at']
+        read_only_fields = ['logo', 'favicon', 'hero_image', 'updated_at']
 
 
 class EmailTemplateSerializer(serializers.ModelSerializer):

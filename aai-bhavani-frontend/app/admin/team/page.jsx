@@ -5,8 +5,7 @@ import { Plus, Pencil, Trash2 } from 'lucide-react';
 import Modal, { ConfirmModal } from '../_components/Modal';
 import FormField, { Input, Textarea, Toggle, FieldRow, FieldSection } from '../_components/FormField';
 import { useToast } from '../_components/Toast';
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+import { adminFetch } from '../../../lib/auth';
 
 const EMPTY_FORM = {
   name: '', designation: '', description: '',
@@ -33,8 +32,7 @@ export default function TeamPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch(`${API}/api/team/`);
-      const json = await res.json();
+      const json = await adminFetch(`/api/team/`);
       setData(json.results ?? json ?? []);
     } catch { setData([]); }
     finally  { setLoading(false); }
@@ -61,13 +59,12 @@ export default function TeamPage() {
     setSaving(true);
     try {
       const isEdit = !!form.id;
-      const url    = isEdit ? `${API}/api/team/${form.id}/` : `${API}/api/team/`;
+      const url    = isEdit ? `/api/team/${form.id}/` : `/api/team/`;
       const method = isEdit ? 'PATCH' : 'POST';
-      const res    = await fetch(url, {
-        method, headers: { 'Content-Type': 'application/json' },
+      await adminFetch(url, {
+        method,
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error();
       toast(isEdit ? 'Member updated' : 'Member added', 'success');
       setModal(false);
       load();
@@ -79,7 +76,7 @@ export default function TeamPage() {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      await fetch(`${API}/api/team/${deleteTarget.id}/`, { method: 'DELETE' });
+      await adminFetch(`/api/team/${deleteTarget.id}/`, { method: 'DELETE' });
       toast('Member deleted', 'success');
       setDeleteTarget(null);
       load();

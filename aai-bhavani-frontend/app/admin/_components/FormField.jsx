@@ -170,7 +170,7 @@ export function StarRating({ value, onChange }) {
 /* ── Form row (2 cols) ── */
 export function FieldRow({ children }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+    <div className="field-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
       {children}
     </div>
   );

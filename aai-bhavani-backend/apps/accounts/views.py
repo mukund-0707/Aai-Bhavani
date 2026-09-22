@@ -13,6 +13,13 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
 
+        # Only superusers can access the admin panel
+        if not user.is_superuser:
+            return Response(
+                {'detail': 'Access denied. Superuser account required.'},
+                status=403
+            )
+
         refresh = RefreshToken.for_user(user)
         return Response({
             'access':  str(refresh.access_token),

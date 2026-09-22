@@ -5,8 +5,7 @@ import { Plus, Pencil, Trash2 } from 'lucide-react';
 import Modal, { ConfirmModal } from '../_components/Modal';
 import FormField, { Input, Textarea, Toggle, FieldRow } from '../_components/FormField';
 import { useToast } from '../_components/Toast';
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+import { adminFetch } from '../../../lib/auth';
 
 const EMPTY_FORM = {
   question: '', answer: '', order: 0, is_active: true,
@@ -23,12 +22,12 @@ export default function FAQsPage() {
   const [saving,       setSaving]       = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting,     setDeleting]     = useState(false);
+  const [draggedIdx,   setDraggedIdx]   = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch(`${API}/api/faqs/`);
-      const json = await res.json();
+      const json = await adminFetch(`/api/faqs/`);
       setData(json.results ?? json ?? []);
     } catch { setData([]); }
     finally  { setLoading(false); }
@@ -55,13 +54,12 @@ export default function FAQsPage() {
     setSaving(true);
     try {
       const isEdit = !!form.id;
-      const url    = isEdit ? `${API}/api/faqs/${form.id}/` : `${API}/api/faqs/`;
+      const url    = isEdit ? `/api/faqs/${form.id}/` : `/api/faqs/`;
       const method = isEdit ? 'PATCH' : 'POST';
-      const res    = await fetch(url, {
-        method, headers: { 'Content-Type': 'application/json' },
+      await adminFetch(url, {
+        method,
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error();
       toast(isEdit ? 'FAQ updated' : 'FAQ added', 'success');
       setModal(false);
       load();
@@ -73,12 +71,54 @@ export default function FAQsPage() {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      await fetch(`${API}/api/faqs/${deleteTarget.id}/`, { method: 'DELETE' });
+      await adminFetch(`/api/faqs/${deleteTarget.id}/`, { method: 'DELETE' });
       toast('FAQ deleted', 'success');
       setDeleteTarget(null);
       load();
     } catch { toast('Failed to delete', 'error'); }
     finally  { setDeleting(false); }
+  };
+
+  // Drag & Drop handlers
+  const handleDragStart = (e, idx) => {
+    setDraggedIdx(idx);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = async (e, dropIdx) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === dropIdx) return;
+
+    const reordered = [...data];
+    const [movedItem] = reordered.splice(draggedIdx, 1);
+    reordered.splice(dropIdx, 0, movedItem);
+
+    // Update order field for all items
+    const updated = reordered.map((item, idx) => ({ ...item, order: idx }));
+    setData(updated);
+    setDraggedIdx(null);
+
+    // Save new order to backend
+    try {
+      const movedFaq = updated[dropIdx];
+      await adminFetch(`/api/faqs/${movedFaq.id}/`, {
+        method: 'PATCH',
+        body: JSON.stringify({ order: dropIdx }),
+      });
+      toast('Order updated', 'success');
+    } catch {
+      toast('Failed to update order', 'error');
+      load(); // Reload on failure
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIdx(null);
   };
 
   return (
@@ -110,12 +150,30 @@ export default function FAQsPage() {
           {data.map((faq, i) => (
             <div
               key={faq.id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, i)}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, i)}
+              onDragEnd={handleDragEnd}
               style={{
                 background: '#111118', border: '1px solid rgba(255,255,255,0.07)',
                 borderRadius: 10, padding: '14px 18px',
                 display: 'flex', alignItems: 'flex-start', gap: 14,
+                cursor: draggedIdx === i ? 'grabbing' : 'grab',
+                opacity: draggedIdx === i ? 0.5 : 1,
+                transition: 'opacity 0.2s',
               }}
             >
+              {/* Drag handle */}
+              <div style={{
+                flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 2,
+                padding: '4px', cursor: 'grab', opacity: 0.4,
+              }}>
+                <div style={{ width: 3, height: 3, borderRadius: '50%', background: 'currentColor' }} />
+                <div style={{ width: 3, height: 3, borderRadius: '50%', background: 'currentColor' }} />
+                <div style={{ width: 3, height: 3, borderRadius: '50%', background: 'currentColor' }} />
+              </div>
+
               {/* Order num */}
               <span style={{
                 flexShrink: 0, width: 24, height: 24, borderRadius: 6,
@@ -123,7 +181,7 @@ export default function FAQsPage() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '0.72rem', fontWeight: 700, color: '#f5c24c',
               }}>
-                {faq.order ?? i + 1}
+                {i + 1}
               </span>
 
               {/* Content */}
@@ -173,16 +231,11 @@ export default function FAQsPage() {
           <FormField label="Answer" required error={errors.answer}>
             <Textarea rows={5} value={form.answer} onChange={set('answer')} placeholder="Detailed answer…" error={errors.answer} />
           </FormField>
-          <FieldRow>
-            <FormField label="Order" hint="Lower = appears first">
-              <Input type="number" value={form.order} onChange={set('order')} min={0} />
-            </FormField>
-            <FormField label="Visibility" style={{ justifyContent: 'flex-end' }}>
-              <div style={{ paddingTop: 8 }}>
-                <Toggle id="faq-active" checked={form.is_active} onChange={setToggle('is_active')} label="Active" />
-              </div>
-            </FormField>
-          </FieldRow>
+          <FormField label="Visibility">
+            <div style={{ paddingTop: 8 }}>
+              <Toggle id="faq-active" checked={form.is_active} onChange={setToggle('is_active')} label="Active (visible on website)" />
+            </div>
+          </FormField>
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
             <button onClick={() => setModal(false)} className="admin-btn admin-btn--ghost">Cancel</button>
             <button onClick={handleSave} disabled={saving} className="admin-btn admin-btn--primary">

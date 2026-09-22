@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 import FormField, { Input, Textarea, FieldRow, FieldSection } from '../_components/FormField';
 import { useToast } from '../_components/Toast';
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+import { adminFetch } from '../../../lib/auth';
 
 const TABS = ['General', 'Social Media', 'Hero Section'];
 
@@ -25,8 +24,7 @@ export default function SiteSettingsPage() {
 
   /* Load existing settings */
   useEffect(() => {
-    fetch(`${API}/api/site-settings/`)
-      .then(r => r.json())
+    adminFetch(`/api/site-settings/`)
       .then(data => {
         setForm(prev => ({ ...prev, ...data }));
       })
@@ -39,12 +37,10 @@ export default function SiteSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch(`${API}/api/site-settings/`, {
+      await adminFetch(`/api/site-settings/`, {
         method:  'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(form),
       });
-      if (!res.ok) throw new Error();
       toast('Settings saved successfully', 'success');
     } catch {
       toast('Failed to save settings', 'error');

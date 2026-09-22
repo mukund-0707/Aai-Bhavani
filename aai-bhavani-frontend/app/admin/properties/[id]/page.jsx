@@ -12,8 +12,7 @@ import FormField, {
 } from '../../_components/FormField';
 import { ConfirmModal } from '../../_components/Modal';
 import { useToast } from '../../_components/Toast';
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+import { adminFetch } from '../../../../lib/auth';
 
 /* ── Default form state ──────────────────────────────────────────── */
 const EMPTY = {
@@ -65,11 +64,7 @@ export default function PropertyFormPage() {
   /* ── Load existing property ────────────────────────────────────── */
   useEffect(() => {
     if (isNew) return;
-    fetch(`${API}/api/properties/${id}/`)
-      .then(r => {
-        if (!r.ok) throw new Error('Not found');
-        return r.json();
-      })
+    adminFetch(`/api/properties/${id}/`)
       .then(data => {
         const { images: imgs, ...rest } = data;
         setForm(prev => ({ ...prev, ...rest, amenities: rest.amenities ?? [] }));
@@ -121,28 +116,25 @@ export default function PropertyFormPage() {
 
     setSaving(true);
     try {
-      const url    = isNew ? `${API}/api/properties/` : `${API}/api/properties/${id}/`;
+      const url    = isNew ? `/api/properties/` : `/api/properties/${id}/`;
       const method = isNew ? 'POST' : 'PATCH';
-      const res    = await fetch(url, {
+      const saved  = await adminFetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({
+        body: JSON.stringify({
           ...form,
           price: String(form.price),
         }),
       });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        if (data && typeof data === 'object') setErrors(data);
-        throw new Error();
-      }
-      const saved = await res.json();
       toast(isNew ? 'Property created!' : 'Property saved!', 'success');
       if (isNew) {
         // Redirect to edit page so images can be uploaded
         router.replace(`/admin/properties/${saved.id}`);
       }
-    } catch {
+    } catch (err) {
+      try {
+        const data = err?.data ?? (typeof err?.message === 'string' ? JSON.parse(err.message) : null);
+        if (data && typeof data === 'object') { setErrors(data); return; }
+      } catch {}
       if (!Object.keys(errors).length) toast('Failed to save property', 'error');
     } finally {
       setSaving(false);
@@ -153,7 +145,7 @@ export default function PropertyFormPage() {
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await fetch(`${API}/api/properties/${id}/`, { method: 'DELETE' });
+      await adminFetch(`/api/properties/${id}/`, { method: 'DELETE' });
       toast('Property deleted', 'success');
       router.push('/admin/properties');
     } catch {
@@ -178,12 +170,10 @@ export default function PropertyFormPage() {
         const fd = new FormData();
         fd.append('image', file);
         fd.append('order', String(images.length + successCount));
-        const res = await fetch(`${API}/api/properties/${id}/images/`, {
+        const newImg = await adminFetch(`/api/properties/${id}/images/`, {
           method: 'POST',
           body:   fd,
         });
-        if (!res.ok) throw new Error();
-        const newImg = await res.json();
         setImages(prev => [...prev, newImg]);
         successCount++;
       } catch {
@@ -199,10 +189,9 @@ export default function PropertyFormPage() {
   /* ── Set primary image ─────────────────────────────────────────── */
   const handleSetPrimary = async (imgId) => {
     try {
-      const res = await fetch(`${API}/api/properties/${id}/images/${imgId}/set_primary/`, {
+      await adminFetch(`/api/properties/${id}/images/${imgId}/set_primary/`, {
         method: 'POST',
       });
-      if (!res.ok) throw new Error();
       setImages(prev => prev.map(img => ({ ...img, is_primary: img.id === imgId })));
       toast('Primary image set', 'success');
     } catch {
@@ -214,10 +203,9 @@ export default function PropertyFormPage() {
   const handleDeleteImage = async (imgId) => {
     setDeletingImgId(imgId);
     try {
-      const res = await fetch(`${API}/api/properties/${id}/images/${imgId}/`, {
+      await adminFetch(`/api/properties/${id}/images/${imgId}/`, {
         method: 'DELETE',
       });
-      if (!res.ok && res.status !== 204) throw new Error();
       setImages(prev => prev.filter(img => img.id !== imgId));
       toast('Image deleted', 'success');
     } catch {

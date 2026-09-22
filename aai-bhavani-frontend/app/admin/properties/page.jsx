@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { Plus, Pencil, Trash2, MapPin, Star } from 'lucide-react';
 import { ConfirmModal } from '../_components/Modal';
 import { useToast } from '../_components/Toast';
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+import { adminFetch } from '../../../lib/auth';
 
 const TYPE_FILTERS = [
   { value: '',     label: 'All Types' },
@@ -43,8 +42,7 @@ export default function PropertiesPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch(`${API}/api/properties/`);
-      const json = await res.json();
+      const json = await adminFetch(`/api/properties/`);
       setData(json.results ?? json ?? []);
     } catch { setData([]); }
     finally  { setLoading(false); }
@@ -56,8 +54,7 @@ export default function PropertiesPage() {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      const res = await fetch(`${API}/api/properties/${deleteTarget.id}/`, { method: 'DELETE' });
-      if (!res.ok && res.status !== 204) throw new Error();
+      await adminFetch(`/api/properties/${deleteTarget.id}/`, { method: 'DELETE' });
       toast('Property deleted', 'success');
       setDeleteTarget(null);
       load();

@@ -34,8 +34,14 @@ export default function Contact({ services, site }) {
     if (!selService) return;
     setCatLoading(true);
     apiFetch(`/api/inquiries/categories/?service=${selService}`)
-      .then(setCategories)
-      .catch(() => setCategories([]))
+      .then((data) => {
+        // Ensure data is always an array
+        setCategories(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error('Categories fetch error:', err);
+        setCategories([]);
+      })
       .finally(() => setCatLoading(false));
   }, [selService]);
 
@@ -83,23 +89,34 @@ export default function Contact({ services, site }) {
     setLoading(true);
     try {
       const selectedSvc = services.find(s => s.slug === selService);
-      const selectedCat = categories.find(c => c.name === form.category);
+      const selectedCat = Array.isArray(categories) 
+        ? categories.find(c => c.name === form.category)
+        : null;
+      
       const payload = {
         service:  selectedSvc?.id,
-        category: selectedCat?.id || undefined,
         name:     form.name,
         phone:    form.phone,
-        email:    form.email || undefined,
-        message:  form.message || undefined,
       };
+      
+      // Only add optional fields if they have values
+      if (selectedCat?.id) payload.category = selectedCat.id;
+      if (form.email.trim()) payload.email = form.email;
+      if (form.message.trim()) payload.message = form.message;
+
+      console.log('Inquiry payload:', payload);
+      
       const data = await apiFetch('/api/inquiries/', {
         method: 'POST',
         body: JSON.stringify(payload),
       });
+      
+      console.log('Inquiry response:', data);
       setWaLink(data.whatsapp_url);
       setSubmitted(true);
     } catch (err) {
-      setServerError('Something went wrong. Please try again.');
+      console.error('Inquiry error:', err);
+      setServerError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -241,7 +258,7 @@ export default function Contact({ services, site }) {
                   <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)' }}>Loading categories…</p>
                 )}
 
-                {!catLoading && categories.length > 0 && (
+                {!catLoading && Array.isArray(categories) && categories.length > 0 && (
                   <div className="field">
                     <label htmlFor="i-category">Category</label>
                     <select

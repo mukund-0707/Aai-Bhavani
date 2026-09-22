@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test - Aai Bhavani</title>
+</head>
+<body>
+    <h1>Backend API Test</h1>
+    <p>Testing: <span id="url"></span></p>
+    <button onclick="testAPI()">Test Connection</button>
+    <pre id="result"></pre>
+
+    <script>
+        // Try all possible backend URLs
+        const URLS_TO_TEST = [
+            'https://aaibhavanigroups.eu.cc/api',
+            'https://aaibhavanigroups.eu.cc:8000/api',
+            'http://aaibhavanigroups.eu.cc:8000/api',
+        ];
+
+        async function testAPI() {
+            const result = document.getElementById('result');
+            result.textContent = 'Testing...';
+
+            for (const baseUrl of URLS_TO_TEST) {
+                const url = `${baseUrl}/site-settings/`;
+                document.getElementById('url').textContent = url;
+                
+                try {
+                    console.log('Testing:', url);
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    
+                    result.textContent = `✅ SUCCESS!\n\nURL: ${url}\nStatus: ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`;
+                    
+                    console.log('✅ Working URL:', url);
+                    alert('✅ Backend accessible at:\n' + baseUrl);
+                    return;
+                } catch (error) {
+                    console.error('❌ Failed:', url, error);
+                    result.textContent += `\n❌ ${url}\nError: ${error.message}\n`;
+                }
+            }
+            
+            result.textContent += '\n\n⚠️ All URLs failed. Backend might be down or CORS not configured.';
+        }
+    </script>
+</body>
+</html>

@@ -8,24 +8,13 @@ from apps.services.serializers import (
 
 
 class ServiceViewSet(viewsets.ModelViewSet):
-    """
-    Public: GET list (active only), GET detail (by pk or slug)
-    Admin:  Full CRUD
-    """
+    lookup_field = 'slug'
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return Service.objects.all()
-        return Service.objects.filter(is_active=True)
+        return Service.objects.all()
 
     def get_serializer_class(self):
-        if self.request.user.is_authenticated:
-            return ServiceAdminSerializer
-        if self.action == 'retrieve':
-            return ServiceDetailSerializer
-        return ServiceListSerializer
+        return ServiceAdminSerializer
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]

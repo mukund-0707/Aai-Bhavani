@@ -5,8 +5,7 @@ import { Plus, Pencil, Trash2, Star } from 'lucide-react';
 import Modal, { ConfirmModal } from '../_components/Modal';
 import FormField, { Input, Textarea, Toggle, StarRating, FieldRow } from '../_components/FormField';
 import { useToast } from '../_components/Toast';
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+import { adminFetch } from '../../../lib/auth';
 
 const EMPTY_FORM = {
   client_name: '', location: '', rating: 5, review: '',
@@ -32,8 +31,7 @@ export default function TestimonialsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch(`${API}/api/testimonials/`);
-      const json = await res.json();
+      const json = await adminFetch(`/api/testimonials/`);
       setData(json.results ?? json ?? []);
     } catch { setData([]); }
     finally  { setLoading(false); }
@@ -63,13 +61,12 @@ export default function TestimonialsPage() {
     setSaving(true);
     try {
       const isEdit = !!form.id;
-      const url    = isEdit ? `${API}/api/testimonials/${form.id}/` : `${API}/api/testimonials/`;
+      const url    = isEdit ? `/api/testimonials/${form.id}/` : `/api/testimonials/`;
       const method = isEdit ? 'PATCH' : 'POST';
-      const res    = await fetch(url, {
-        method, headers: { 'Content-Type': 'application/json' },
+      await adminFetch(url, {
+        method,
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error();
       toast(isEdit ? 'Testimonial updated' : 'Testimonial added', 'success');
       setModal(false);
       load();
@@ -81,7 +78,7 @@ export default function TestimonialsPage() {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      await fetch(`${API}/api/testimonials/${deleteTarget.id}/`, { method: 'DELETE' });
+      await adminFetch(`/api/testimonials/${deleteTarget.id}/`, { method: 'DELETE' });
       toast('Deleted', 'success');
       setDeleteTarget(null);
       load();

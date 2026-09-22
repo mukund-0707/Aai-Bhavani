@@ -58,16 +58,22 @@ export default function Sidebar({ mobileOpen, onClose }) {
       )}
 
       {/* Sidebar */}
-      <aside style={{
-        position: 'fixed', top: 0, left: 0, bottom: 0,
-        width: 220, zIndex: 40,
-        background: '#0d0d14',
-        borderRight: '1px solid rgba(255,255,255,0.06)',
-        display: 'flex', flexDirection: 'column',
-        transform: mobileOpen ? 'translateX(0)' : undefined,
-        transition: 'transform 0.3s cubic-bezier(0.22,1,0.36,1)',
-        // Mobile: hidden by default via CSS class
-      }}>
+      <aside
+        className={`admin-sidebar ${mobileOpen ? 'mobile-open' : ''}`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          bottom: 0,
+          left: 0, // Desktop default: visible
+          width: 220,
+          zIndex: 40,
+          background: '#0d0d14',
+          borderRight: '1px solid rgba(255,255,255,0.06)',
+          display: 'flex',
+          flexDirection: 'column',
+          transition: 'left 0.3s cubic-bezier(0.22,1,0.36,1)',
+        }}
+      >
         {/* Logo */}
         <div style={{
           padding: '18px 20px 16px',

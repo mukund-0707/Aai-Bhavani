@@ -71,22 +71,31 @@ export default function Referral({ services }) {
     setLoading(true);
     try {
       const selectedSvc = referralServices.find(s => s.title === form.service);
+      
       const payload = {
         referrer_name:  form.referrer_name,
         referrer_phone: form.referrer_phone,
-        referrer_email: form.referrer_email || undefined,
         client_name:    form.client_name,
-        client_phone:   form.client_phone || undefined,
         service:        selectedSvc?.id,
       };
+      
+      // Only add optional fields if they have values
+      if (form.referrer_email.trim()) payload.referrer_email = form.referrer_email;
+      if (form.client_phone.trim()) payload.client_phone = form.client_phone;
+
+      console.log('Referral payload:', payload);
+      
       const data = await apiFetch('/api/referrals/', {
         method: 'POST',
         body: JSON.stringify(payload),
       });
+      
+      console.log('Referral response:', data);
       setWaLink(data.whatsapp_url);
       setSubmitted(true);
     } catch (err) {
-      setServerError('Something went wrong. Please try again.');
+      console.error('Referral error:', err);
+      setServerError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }

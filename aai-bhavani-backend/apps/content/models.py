@@ -18,7 +18,7 @@ class Testimonial(models.Model):
 
 
 class TeamMember(models.Model):
-    photo       = models.ImageField(upload_to='team/')
+    photo       = models.ImageField(upload_to='team/', blank=True)
     name        = models.CharField(max_length=100)
     designation = models.CharField(max_length=150)
     description = models.TextField(blank=True)

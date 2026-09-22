@@ -7,8 +7,7 @@ import StatusBadge from '../_components/StatusBadge';
 import Modal       from '../_components/Modal';
 import { useToast } from '../_components/Toast';
 import FormField, { Select, Textarea, Input } from '../_components/FormField';
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+import { adminFetch } from '../../../lib/auth';
 
 const STATUS_OPTIONS = [
   { value: '',          label: 'All Status' },
@@ -45,8 +44,7 @@ export default function ReferralsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch(`${API}/api/referrals/`);
-      const json = await res.json();
+      const json = await adminFetch(`/api/referrals/`);
       setData(json.results ?? json ?? []);
     } catch {
       setData([]);
@@ -75,12 +73,10 @@ export default function ReferralsPage() {
         deal_value:      dealValue !== '' ? dealValue : null,
         commission_paid: commission !== '' ? commission : null,
       };
-      const res = await fetch(`${API}/api/referrals/${selected.id}/`, {
+      await adminFetch(`/api/referrals/${selected.id}/`, {
         method:  'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error();
       toast('Referral updated successfully', 'success');
       setSelected(null);
       load();
