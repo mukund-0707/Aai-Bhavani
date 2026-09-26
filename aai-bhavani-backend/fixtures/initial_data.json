@@ -4,28 +4,29 @@
     "pk": 1,
     "fields": {
       "site_name": "Aai Bhavani Consultant",
-      "site_tagline": "Aapka Vishwasneey Property Partner",
+      "site_tagline": "Your Trusted Property Partner",
       "logo": "",
       "favicon": "",
       "phone": "+91 98765 43210",
       "whatsapp": "919876543210",
       "email": "info@aaibhavani.com",
-      "address": "Pune, Maharashtra, India",
+      "address": "Surat, Gujarat, India",
       "google_map_url": "",
-      "working_hours": "Mon-Sat: 9am - 7pm",
+      "working_hours": "Mon–Sat: 9am – 7pm",
       "facebook_url": "",
       "instagram_url": "",
       "linkedin_url": "",
       "youtube_url": "",
-      "hero_title": "Aapka Sapna, Hamari Zimmedari",
+      "hero_title": "Find it. Finance it. Design it.",
       "hero_subtitle": "Property Consulting | Interior Design | Home Loan | Digital Marketing",
-      "hero_description": "Aai Bhavani Consultant — Pune ka vishwasneey property aur services partner.",
+      "hero_description": "Aai Bhavani Consultant — your trusted partner for property, finance, interiors and more.",
       "hero_image": "",
-      "hero_button_text": "Services Dekhein",
-      "hero_button_link": "/services",
+      "hero_button_text": "Talk to an Expert",
+      "hero_button_link": "#contact",
       "updated_at": "2026-01-01T00:00:00Z"
     }
   },
+
   {
     "model": "services.service",
     "pk": 1,
@@ -34,15 +35,15 @@
       "slug": "property-consulting",
       "icon": "home",
       "banner_image": "",
-      "short_description": "Buy, sell ya rent karne mein expert guidance.",
-      "long_description": "Hamari team aapko sahi property dhundhne mein, negotiations mein, aur legal processes mein help karti hai.",
+      "short_description": "Expert guidance for buying, selling or renting property.",
+      "long_description": "Our team helps you find the right property, navigate negotiations, and handle all legal processes end-to-end.",
       "order": 1,
       "is_active": true,
       "created_at": "2026-01-01T00:00:00Z",
       "is_referral_enabled": true,
       "referral_type": "percent",
       "referral_value": "50.00",
-      "referral_note": "Deal close hone par 50% profit share"
+      "referral_note": "50% profit share on deal closure"
     }
   },
   {
@@ -53,15 +54,15 @@
       "slug": "home-loan",
       "icon": "bank",
       "banner_image": "",
-      "short_description": "Best interest rate par home loan assistance.",
-      "long_description": "Sabse competitive rates par home loan processing mein complete support.",
+      "short_description": "Home loan assistance at the best interest rates.",
+      "long_description": "Complete support for home loan processing at the most competitive rates across leading banks.",
       "order": 2,
       "is_active": true,
       "created_at": "2026-01-01T00:00:00Z",
       "is_referral_enabled": true,
       "referral_type": "flat",
       "referral_value": "5000.00",
-      "referral_note": "Loan disbursal par flat Rs.5000"
+      "referral_note": "Flat ₹5,000 on loan disbursal"
     }
   },
   {
@@ -72,8 +73,8 @@
       "slug": "interior-design",
       "icon": "palette",
       "banner_image": "",
-      "short_description": "Aapke ghar ko sundar banana hamara kaam.",
-      "long_description": "Modern aur budget-friendly interior design solutions for homes and offices.",
+      "short_description": "Modern, budget-friendly interiors for homes and offices.",
+      "long_description": "We design beautiful, functional spaces that reflect your personality — from concept to completion.",
       "order": 3,
       "is_active": true,
       "created_at": "2026-01-01T00:00:00Z",
@@ -91,8 +92,8 @@
       "slug": "digital-marketing",
       "icon": "megaphone",
       "banner_image": "",
-      "short_description": "Aapke business ko online grow karo.",
-      "long_description": "Social media, SEO, aur paid ads ke through business growth.",
+      "short_description": "Grow your business online with data-driven marketing.",
+      "long_description": "From social media and SEO to paid ads — we build campaigns that drive real results for your business.",
       "order": 4,
       "is_active": true,
       "created_at": "2026-01-01T00:00:00Z",
@@ -102,6 +103,26 @@
       "referral_note": ""
     }
   },
+  {
+    "model": "services.service",
+    "pk": 5,
+    "fields": {
+      "title": "IT Services",
+      "slug": "it-services",
+      "icon": "users",
+      "banner_image": "",
+      "short_description": "Custom software, websites and IT solutions for your business.",
+      "long_description": "We build tailored technology solutions — from websites and mobile apps to business automation and cloud infrastructure.",
+      "order": 5,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "is_referral_enabled": true,
+      "referral_type": "percent",
+      "referral_value": "10.00",
+      "referral_note": "10% commission on project value"
+    }
+  },
+
   {
     "model": "inquiries.inquirycategory",
     "pk": 1,
@@ -127,6 +148,157 @@
     "pk": 5,
     "fields": { "service": 2, "name": "Balance Transfer", "is_active": true, "order": 2 }
   },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 6,
+    "fields": { "service": 5, "name": "Website Development",  "is_active": true, "order": 1 }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 7,
+    "fields": { "service": 5, "name": "Mobile App",           "is_active": true, "order": 2 }
+  },
+  {
+    "model": "inquiries.inquirycategory",
+    "pk": 8,
+    "fields": { "service": 5, "name": "Business Automation",  "is_active": true, "order": 3 }
+  },
+
+  {
+    "model": "content.teammember",
+    "pk": 1,
+    "fields": {
+      "photo": "",
+      "name": "Dhaval Mahajan",
+      "designation": "Founder & CEO",
+      "description": "Dhaval brings over 10 years of experience in real estate and business consulting. He founded Aai Bhavani Consultant with a vision to simplify property transactions and deliver trusted services under one roof.",
+      "facebook": "",
+      "instagram": "",
+      "linkedin": "",
+      "order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "content.teammember",
+    "pk": 2,
+    "fields": {
+      "photo": "",
+      "name": "Mukund Patil",
+      "designation": "Co-Founder & Operations Head",
+      "description": "Mukund oversees day-to-day operations and client relationships. His background in finance and project management ensures every client gets a seamless, end-to-end experience.",
+      "facebook": "",
+      "instagram": "",
+      "linkedin": "",
+      "order": 2,
+      "is_active": true
+    }
+  },
+
+  {
+    "model": "content.testimonial",
+    "pk": 1,
+    "fields": {
+      "client_name": "Rajesh Mehta",
+      "photo": "",
+      "rating": 5,
+      "review": "Aai Bhavani helped us find our dream home in Surat within 3 weeks. Dhaval personally guided us through every step — from shortlisting to registration. Highly recommended!",
+      "location": "Adajan, Surat",
+      "is_active": true,
+      "order": 1
+    }
+  },
+  {
+    "model": "content.testimonial",
+    "pk": 2,
+    "fields": {
+      "client_name": "Priya Joshi",
+      "photo": "",
+      "rating": 5,
+      "review": "Got my home loan approved within 10 days at a rate lower than what my bank quoted. The team handled all the paperwork — I just had to sign.",
+      "location": "Vesu, Surat",
+      "is_active": true,
+      "order": 2
+    }
+  },
+  {
+    "model": "content.testimonial",
+    "pk": 3,
+    "fields": {
+      "client_name": "Amit Sharma",
+      "photo": "",
+      "rating": 5,
+      "review": "Our office interior was transformed completely within the budget and timeline. The design team understood exactly what we wanted. Very professional and creative.",
+      "location": "Athwalines, Surat",
+      "is_active": true,
+      "order": 3
+    }
+  },
+  {
+    "model": "content.testimonial",
+    "pk": 4,
+    "fields": {
+      "client_name": "Sneha Patel",
+      "photo": "",
+      "rating": 4,
+      "review": "Referred my colleague for a property deal and earned a great commission. The referral process was smooth and the payout was on time. Will definitely refer more people!",
+      "location": "Katargam, Surat",
+      "is_active": true,
+      "order": 4
+    }
+  },
+
+  {
+    "model": "content.faq",
+    "pk": 1,
+    "fields": {
+      "question": "What services does Aai Bhavani Consultant offer?",
+      "answer": "We offer Property Consulting (buy/sell/rent), Home Loan assistance, Interior Design, Digital Marketing, and IT Services — all under one roof in Surat.",
+      "order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "content.faq",
+    "pk": 2,
+    "fields": {
+      "question": "Is there any fee for property search?",
+      "answer": "No. Property search and initial consultation are completely free. Our fee is only applicable on successful deal closure, which is standard industry practice.",
+      "order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "content.faq",
+    "pk": 3,
+    "fields": {
+      "question": "How does the referral program work?",
+      "answer": "Simply share a friend or family member's name and number with us. If they close a deal, you earn a commission — up to 50% profit share on property deals. No investment required.",
+      "order": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "content.faq",
+    "pk": 4,
+    "fields": {
+      "question": "How quickly can I get a home loan approved?",
+      "answer": "With our bank partnerships, most home loans are approved within 7–15 working days, subject to document verification. We handle the entire process so you don't have to visit the bank.",
+      "order": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "content.faq",
+    "pk": 5,
+    "fields": {
+      "question": "Do you work in cities outside Surat?",
+      "answer": "We are currently based in Surat but handle referrals and digital services across Gujarat. For other cities, contact us and we will connect you with our network partners.",
+      "order": 5,
+      "is_active": true
+    }
+  },
+
   {
     "model": "core.emailtemplate",
     "pk": 1,
@@ -185,7 +357,7 @@
     "fields": {
       "name": "Inquiry — User Confirmation",
       "trigger": "inquiry_customer_confirmation",
-      "template_body": "Namaste {{customer_name}}!\n\n{{company_name}} mein aapka swagat hai.\nAapki *{{category}}* inquiry humne receive kar li hai.\n\nHum aapko jald contact karenge.\nKoi sawaal ho to WhatsApp karein: {{whatsapp_number}}\n\nDhanyawad!",
+      "template_body": "Hello {{customer_name}}! 👋\n\nThank you for contacting {{company_name}}.\nWe have received your inquiry for *{{category}}*.\n\nOur team will get back to you shortly.\nFor urgent queries, WhatsApp us: {{whatsapp_number}}\n\nThank you!",
       "is_active": true,
       "updated_at": "2026-01-01T00:00:00Z"
     }
@@ -207,7 +379,7 @@
     "fields": {
       "name": "Referral — Referrer Confirmation",
       "trigger": "referral_customer_confirmation",
-      "template_body": "Namaste {{customer_name}}!\n\nAapka referral {{company_name}} mein receive ho gaya hai.\nService: *{{service}}*\n\nHum jald aapse contact karenge.\nDhanyawad!",
+      "template_body": "Hello {{customer_name}}! 👋\n\nYour referral has been received by {{company_name}}.\nService: *{{service}}*\n\nWe will get back to you shortly. Thank you!",
       "is_active": true,
       "updated_at": "2026-01-01T00:00:00Z"
     }

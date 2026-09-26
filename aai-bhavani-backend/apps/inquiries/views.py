@@ -13,64 +13,55 @@ from apps.inquiries.serializers import (
 
 class InquiryCategoryViewSet(viewsets.ModelViewSet):
     """
-    Public: GET list — ?service=<slug> se filter karo
-        - Service mein categories hain → list return
-        - Service mein categories nahi → [] empty list
-        - No filter → saari active categories
+    Public: GET list — filter using ?service=<slug>
+        - Service has categories → return list
+        - Service has no categories → return [] empty list
+        - No filter → return all active categories
     Admin: Full CRUD
     """
 
     def get_serializer_class(self):
-        if self.request.user.is_authenticated:
-            return InquiryCategoryAdminSerializer
-        return InquiryCategorySerializer
+        # No Auth mode: always return admin serializer
+        return InquiryCategoryAdminSerializer
 
     def get_queryset(self):
         qs = InquiryCategory.objects.select_related('service')
-
-        if not self.request.user.is_authenticated:
-            qs = qs.filter(is_active=True)
-
         # ?service=<slug> filter
         service_slug = self.request.query_params.get('service')
         if service_slug:
-            qs = qs.filter(service__slug=service_slug)
-
+            qs = qs.filter(service__slug=service_slug, is_active=True)
         return qs
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+        # No Auth mode — AllowAny for all actions
+        return [permissions.AllowAny()]
 
 
 class InquiryViewSet(viewsets.ModelViewSet):
     """
-    Public: POST — inquiry submit karo
+    Public: POST — submit an inquiry
     Admin:  GET list/detail, PATCH (status + notes update)
     """
 
     def get_serializer_class(self):
-        if self.request.user.is_authenticated:
-            return InquiryAdminSerializer
-        return InquirySerializer
+        # Use admin serializer for GET, public serializer for POST
+        if self.action == 'create':
+            return InquirySerializer
+        return InquiryAdminSerializer
 
     def get_queryset(self):
-        # Always return full queryset — permissions handle access control
         return Inquiry.objects.select_related('service', 'category').all()
 
     def get_permissions(self):
-        if self.action == 'create':
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+        # No Auth mode — AllowAny for all actions
+        return [permissions.AllowAny()]
 
     def create(self, request, *args, **kwargs):
         serializer = InquirySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         inquiry = serializer.save()
 
-        # Notifications — inquiry save hone ke baad fire karo
-        # Fail hone pe bhi 201 return hoga
+        # Fire notifications after inquiry is saved — return 201 even if they fail
         whatsapp_url = None
         try:
             from apps.core.notifications import NotificationService
@@ -81,7 +72,7 @@ class InquiryViewSet(viewsets.ModelViewSet):
         return Response(
             {
                 'success':      True,
-                'message':      'Inquiry submit ho gayi! Hum jald contact karenge.',
+                'message':      'Inquiry submitted! We will contact you shortly.',
                 'whatsapp_url': whatsapp_url,
             },
             status=status.HTTP_201_CREATED

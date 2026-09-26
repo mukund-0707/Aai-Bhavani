@@ -8,22 +8,26 @@ from apps.content.serializers import (
 
 
 class ContentViewSet(viewsets.ModelViewSet):
-    """Base viewset — public GET (active only), admin full CRUD."""
+    """Base viewset — public GET (active only), admin full CRUD.
+
+    No Auth mode: AllowAny + admin serializer always.
+    When JWT is added: restore is_authenticated checks.
+    """
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return self.queryset_all
-        return self.queryset_all.filter(is_active=True)
+        # No Auth mode: return all records so admin can see hidden items too
+        # When JWT is added: filter(is_active=True) for unauthenticated
+        return self.queryset_all
 
     def get_serializer_class(self):
-        if self.request.user.is_authenticated:
-            return self.admin_serializer_class
-        return self.public_serializer_class
+        # No Auth mode: always use admin serializer (has all fields)
+        # When JWT is added: use public_serializer_class for unauthenticated
+        return self.admin_serializer_class
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+        # No Auth mode — AllowAny for all actions
+        # When JWT is added: restore IsAuthenticated for write actions
+        return [permissions.AllowAny()]
 
 
 class TestimonialViewSet(ContentViewSet):

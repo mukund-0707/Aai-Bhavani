@@ -17,9 +17,9 @@ class SiteSettingsView(APIView):
     """
 
     def get_permissions(self):
-        if self.request.method == 'GET':
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+        # No Auth mode — AllowAny for all actions
+        # When JWT is added: restore IsAuthenticated for PATCH
+        return [permissions.AllowAny()]
 
     def get(self, request):
         settings = SiteSettings.get()
@@ -35,14 +35,14 @@ class SiteSettingsView(APIView):
 
 
 class EmailTemplateViewSet(viewsets.ModelViewSet):
-    """Admin only — email templates manage karo."""
+    """Admin only — manage email templates."""
     queryset           = EmailTemplate.objects.all()
     serializer_class   = EmailTemplateSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
 class WhatsAppTemplateViewSet(viewsets.ModelViewSet):
-    """Admin only — WhatsApp templates manage karo."""
+    """Admin only — manage WhatsApp templates."""
     queryset           = WhatsAppTemplate.objects.all()
     serializer_class   = WhatsAppTemplateSerializer
     permission_classes = [permissions.IsAuthenticated]

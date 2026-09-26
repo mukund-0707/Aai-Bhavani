@@ -1,14 +1,14 @@
 """
 Notification Service — Aai Bhavani
 
-Email aur WhatsApp notifications yahan se fire hoti hain.
+Handles Email and WhatsApp notifications.
 
 Dev/Prod switching:
-    settings.WHATSAPP_BACKEND = 'wame'   → wa.me URL (development, free)
+    settings.WHATSAPP_BACKEND = 'wame'   → wa.me redirect URL (development, free)
     settings.WHATSAPP_BACKEND = 'twilio' → Twilio API (production)
 
-    settings.EMAIL_BACKEND = console     → terminal print (development)
-    settings.EMAIL_BACKEND = smtp        → actual Gmail (production)
+    settings.EMAIL_BACKEND = console     → prints to terminal (development)
+    settings.EMAIL_BACKEND = smtp        → sends via Gmail (production)
 """
 import urllib.parse
 import logging
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # ── Placeholder renderer ──────────────────────────────────────────────────────
 
 def render_template(template_str: str, context: dict) -> str:
-    """{{key}} placeholders ko context values se replace karo."""
+    """Replace {{key}} placeholders with values from context."""
     result = template_str
     for key, value in context.items():
         result = result.replace(f'{{{{{key}}}}}', str(value))
@@ -36,14 +36,14 @@ class WhatsAppService:
     @staticmethod
     def build_url(to_number: str, message: str) -> str | None:
         """
-        wa.me redirect URL banao.
-        Frontend is URL se button dikhayega — user click kare to WhatsApp khulega.
+        Build a wa.me redirect URL.
+        Frontend uses this URL to show a 'Chat on WhatsApp' button.
         """
         if not to_number:
             return None
-        # Number clean karo — sirf digits
+        # Strip everything except digits
         clean = ''.join(filter(str.isdigit, to_number))
-        # India prefix add karo agar nahi hai
+        # Add India country code if missing
         if len(clean) == 10:
             clean = '91' + clean
         encoded = urllib.parse.quote(message)
@@ -52,8 +52,8 @@ class WhatsAppService:
     @classmethod
     def send(cls, to_number: str, message: str) -> str | None:
         """
-        WHATSAPP_BACKEND setting ke hisaab se send karo.
-        Returns: wa.me URL (wame backend) ya None (failure/missing)
+        Send based on WHATSAPP_BACKEND setting.
+        Returns: wa.me URL (wame backend) or None on failure.
         """
         if not to_number:
             return None
@@ -73,8 +73,8 @@ class WhatsAppService:
     def _send_twilio(to_number: str, message: str) -> None:
         """
         Production: Twilio WhatsApp API.
-        Ye tab implement karo jab production pe jaana ho.
-        Settings chahiye: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_FROM
+        Implement this when moving to production.
+        Required settings: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_FROM
         """
         # from twilio.rest import Client
         # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -94,14 +94,14 @@ class EmailService:
     @staticmethod
     def send(to_emails: list[str], subject: str, body: str, html_body: str = '') -> bool:
         """
-        Email bhejo. Fail hone pe crash nahi karta — sirf log karta hai.
-        Dev mein: console pe print hoga.
-        Prod mein: actual Gmail se jaayega.
+        Send an email. Does not crash on failure — logs a warning instead.
+        Dev:  prints to console.
+        Prod: sends via Gmail SMTP.
         """
         if not to_emails:
             return False
 
-        # Empty emails filter karo
+        # Filter out empty addresses
         valid_emails = [e for e in to_emails if e and e.strip()]
         if not valid_emails:
             return False
@@ -125,13 +125,13 @@ class EmailService:
 
 class NotificationService:
     """
-    Inquiry aur Referral notifications dispatch karta hai.
-    Inquiry hamesha save hogi — notifications best-effort hain.
+    Dispatches notifications for Inquiry and Referral submissions.
+    The record is always saved — notifications are best-effort.
     """
 
     @staticmethod
     def _get_template(trigger: str, model_class):
-        """DB se active template fetch karo — None return karo agar nahi mila."""
+        """Fetch active template from DB — returns None if not found."""
         try:
             return model_class.objects.filter(trigger=trigger, is_active=True).first()
         except Exception:
@@ -139,7 +139,7 @@ class NotificationService:
 
     @staticmethod
     def _get_site_settings():
-        """SiteSettings singleton fetch karo."""
+        """Fetch the SiteSettings singleton."""
         try:
             from apps.core.models import SiteSettings
             return SiteSettings.get()
@@ -148,7 +148,7 @@ class NotificationService:
 
     @staticmethod
     def _get_admin_emails() -> list[str]:
-        """Saare is_staff=True, is_active=True users ke emails."""
+        """Return emails of all active staff users."""
         try:
             from apps.accounts.models import User
             return list(
@@ -162,12 +162,12 @@ class NotificationService:
     @classmethod
     def send_inquiry_notifications(cls, inquiry) -> str | None:
         """
-        Inquiry submit hone par teen notifications:
-        1. User ko confirmation email (agar email diya ho)
-        2. User ko WhatsApp wa.me URL (phone mandatory)
-        3. Saare admins ko notification email
+        Fires three notifications when an inquiry is submitted:
+        1. Confirmation email to the user (if email provided)
+        2. WhatsApp wa.me URL for the user (phone is mandatory)
+        3. Notification email to all admin staff
 
-        Returns: whatsapp_url (frontend use karega) ya None
+        Returns: whatsapp_url (used by frontend for the CTA button) or None
         """
         from apps.core.models import EmailTemplate, WhatsAppTemplate
 
@@ -193,7 +193,7 @@ class NotificationService:
 
         whatsapp_url = None
 
-        # 1. User ko confirmation email
+        # 1. Confirmation email to user
         if inquiry.email:
             try:
                 tmpl = cls._get_template(
@@ -217,7 +217,7 @@ class NotificationService:
             except Exception as e:
                 logger.warning(f"Inquiry customer email failed: {e}")
 
-        # 2. User ko WhatsApp URL
+        # 2. WhatsApp URL for user
         try:
             tmpl = cls._get_template(
                 WhatsAppTemplate.Trigger.INQUIRY_CUSTOMER_CONFIRMATION, WhatsAppTemplate
@@ -226,17 +226,17 @@ class NotificationService:
                 message = render_template(tmpl.template_body, context)
             else:
                 message = (
-                    f"Namaste {inquiry.name}! 🙏\n"
-                    f"{company} mein aapka swagat hai.\n"
-                    f"Aapki {display_cat} inquiry humne receive kar li hai.\n"
-                    f"Hum aapko jald contact karenge.\n"
-                    f"Dhanyawad! 😊"
+                    f"Hello {inquiry.name}! 👋\n"
+                    f"Thank you for contacting {company}.\n"
+                    f"We have received your inquiry for {display_cat}.\n"
+                    f"Our team will get back to you shortly.\n"
+                    f"Thank you! 😊"
                 )
             whatsapp_url = WhatsAppService.send(inquiry.phone, message)
         except Exception as e:
             logger.warning(f"Inquiry WhatsApp URL generation failed: {e}")
 
-        # 3. Admins ko notification email
+        # 3. Notification email to all admins
         try:
             admin_emails = cls._get_admin_emails()
             if admin_emails:
@@ -269,12 +269,12 @@ class NotificationService:
     @classmethod
     def send_referral_notifications(cls, referral) -> str | None:
         """
-        Referral submit hone par teen notifications:
-        1. Referrer ko confirmation email (agar email diya ho)
-        2. Referrer ko WhatsApp wa.me URL
-        3. Saare admins ko notification email
+        Fires three notifications when a referral is submitted:
+        1. Confirmation email to the referrer (if email provided)
+        2. WhatsApp wa.me URL for the referrer
+        3. Notification email to all admin staff
 
-        Returns: whatsapp_url ya None
+        Returns: whatsapp_url or None
         """
         from apps.core.models import EmailTemplate, WhatsAppTemplate
 
@@ -299,7 +299,7 @@ class NotificationService:
 
         whatsapp_url = None
 
-        # 1. Referrer ko confirmation email
+        # 1. Confirmation email to referrer
         if referral.referrer_email:
             try:
                 tmpl = cls._get_template(
@@ -323,7 +323,7 @@ class NotificationService:
             except Exception as e:
                 logger.warning(f"Referral customer email failed: {e}")
 
-        # 2. Referrer ko WhatsApp URL
+        # 2. WhatsApp URL for referrer
         try:
             tmpl = cls._get_template(
                 WhatsAppTemplate.Trigger.REFERRAL_CUSTOMER_CONFIRMATION, WhatsAppTemplate
@@ -332,17 +332,17 @@ class NotificationService:
                 message = render_template(tmpl.template_body, context)
             else:
                 message = (
-                    f"Namaste {referral.referrer_name}! 🙏\n"
-                    f"Aapka referral {company} mein receive ho gaya hai.\n"
+                    f"Hello {referral.referrer_name}! 👋\n"
+                    f"Your referral has been received by {company}.\n"
                     f"Client: {referral.client_name}\n"
                     f"Service: {service_name}\n"
-                    f"Hum jald aapse contact karenge. Dhanyawad! 😊"
+                    f"We will get back to you shortly. Thank you! 😊"
                 )
             whatsapp_url = WhatsAppService.send(referral.referrer_phone, message)
         except Exception as e:
             logger.warning(f"Referral WhatsApp URL generation failed: {e}")
 
-        # 3. Admins ko notification
+        # 3. Notification email to all admins
         try:
             admin_emails = cls._get_admin_emails()
             if admin_emails:

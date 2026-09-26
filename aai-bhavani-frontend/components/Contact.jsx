@@ -1,0 +1,334 @@
+'use client';
+
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { apiFetch } from '../lib/api';
+
+const WaIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" style={{ width: 19, height: 19, fill: 'currentColor', flexShrink: 0 }}>
+    <path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm5.3 14c-.2.6-1.2 1.2-1.8 1.3-.5.1-1 .1-1.7-.1a13 13 0 0 1-6.9-6.1c-.5-.9-.8-1.7-.8-2.4 0-.8.4-1.4.9-1.8.2-.2.4-.2.6-.2h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2 0 .4-.1.5l-.4.5c-.1.2-.3.3-.1.6a9 9 0 0 0 3.9 3.4c.3.1.5.1.6-.1l.7-.9c.2-.2.3-.2.6-.1l1.9.9c.3.1.4.2.5.3v.8Z" />
+  </svg>
+);
+
+export default function Contact({ services, site }) {
+  const [submitted, setSubmitted]   = useState(false);
+  const [waLink,    setWaLink]      = useState('');
+  const [errors,    setErrors]      = useState({});
+  const [loading,   setLoading]     = useState(false);
+  const [serverError, setServerError] = useState('');
+  const [selService, setSelService] = useState(services[0]?.slug ?? '');
+  const [categories, setCategories] = useState([]);
+  const [catLoading, setCatLoading] = useState(false);
+  const [form, setForm] = useState({
+    name: '', phone: '', email: '', category: '', message: '',
+  });
+
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  /* Ref for scroll-into-view after submit */
+  const cardRef = useRef(null);
+
+  /* Service change pe categories fetch karo */
+  useEffect(() => {
+    if (!selService) return;
+    setCatLoading(true);
+    apiFetch(`/api/inquiries/categories/?service=${selService}`)
+      .then((data) => {
+        // Ensure data is always an array
+        setCategories(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error('Categories fetch error:', err);
+        setCategories([]);
+      })
+      .finally(() => setCatLoading(false));
+  }, [selService]);
+
+  /* Services card ke "Enquire" button click pe service select */
+  useEffect(() => {
+    const handler = (e) => {
+      const slug = e.detail;
+      if (slug && services.find((s) => s.slug === slug)) {
+        setSelService(slug);
+        setForm((f) => ({ ...f, category: '' }));
+      }
+    };
+    window.addEventListener('select-service', handler);
+    return () => window.removeEventListener('select-service', handler);
+  }, [services]);
+
+  /* After submitted → true, scroll so the success card sits comfortably
+     below the navbar. Manual offset = navbar height + breathing room.  */
+  useEffect(() => {
+    if (!submitted) return;
+    const id = setTimeout(() => {
+      if (!cardRef.current) return;
+      const navbar  = document.querySelector('header');
+      const navH    = navbar ? navbar.getBoundingClientRect().height : 70;
+      const cardTop = cardRef.current.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: cardTop - navH - 24, behavior: 'smooth' });
+    }, 80);
+    return () => clearTimeout(id);
+  }, [submitted]);
+
+  function validate() {
+    const errs = {};
+    if (!form.name.trim())  errs.name  = 'Required';
+    if (!form.phone.trim()) errs.phone = 'Required';
+    return errs;
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
+    setServerError('');
+
+    setLoading(true);
+    try {
+      const selectedSvc = services.find(s => s.slug === selService);
+      const selectedCat = Array.isArray(categories) 
+        ? categories.find(c => c.name === form.category)
+        : null;
+      
+      const payload = {
+        service:  selectedSvc?.id,
+        name:     form.name,
+        phone:    form.phone,
+      };
+      
+      // Only add optional fields if they have values
+      if (selectedCat?.id) payload.category = selectedCat.id;
+      if (form.email.trim()) payload.email = form.email;
+      if (form.message.trim()) payload.message = form.message;
+
+      console.log('Inquiry payload:', payload);
+      
+      const data = await apiFetch('/api/inquiries/', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      
+      console.log('Inquiry response:', data);
+      setWaLink(data.whatsapp_url);
+      setSubmitted(true);
+    } catch (err) {
+      console.error('Inquiry error:', err);
+      setServerError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function reset() {
+    setSubmitted(false);
+    setWaLink('');
+    setServerError('');
+    setForm({ name: '', phone: '', email: '', category: '', message: '' });
+  }
+
+  return (
+    <section className="section section--dark" id="contact">
+      <div className="shell contact">
+
+        {/* Left — contact info */}
+        <div className="contact__left reveal">
+          <p className="eyebrow eyebrow--gold"><i />Get in Touch</p>
+          <h2 className="h2">
+            Let's start with<br />one call.
+          </h2>
+          <p className="sechead__lede">
+            Fill in the form and our team will get back to you shortly. In a hurry? WhatsApp us directly.
+          </p>
+
+          <ul className="contact__list">
+            <li>
+              <span>Phone</span>
+              <a href={`tel:${site.phone}`}>{site.phone}</a>
+            </li>
+            <li>
+              <span>WhatsApp</span>
+              <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                {site.phone}
+              </a>
+            </li>
+            <li>
+              <span>Email</span>
+              <a href={`mailto:${site.email}`}>{site.email}</a>
+            </li>
+            <li>
+              <span>Office</span>
+              <address>{site.address}</address>
+            </li>
+            <li>
+              <span>Hours</span>
+              <address>{site.working_hours}</address>
+            </li>
+          </ul>
+        </div>
+
+        {/* Right — card wrapper with ref for scroll targeting */}
+        <div className="contact__right reveal" ref={cardRef}>
+          <AnimatePresence mode="wait">
+            {submitted ? (
+
+              /* ── Success card ── */
+              <motion.div
+                key="success"
+                className="card-form card-form--success"
+                initial={{ opacity: 0, y: 18, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0,  scale: 1    }}
+                exit={{    opacity: 0, y: -12, scale: 0.98 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <motion.div
+                  className="success__icon"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+                >
+                  <CheckCircle2 size={44} strokeWidth={1.5} />
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0  }}
+                  transition={{ delay: 0.3, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+                >
+                  <h3 className="form__title">Inquiry submitted!</h3>
+                  <p className="form__successmsg">
+                    We'll contact you the same working day. For urgent queries,
+                    reach us on WhatsApp.
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0  }}
+                  transition={{ delay: 0.42, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}
+                >
+                  <a className="btn btn--wa" href={waLink} target="_blank" rel="noopener noreferrer">
+                    <WaIcon />
+                    <span>Chat on WhatsApp</span>
+                  </a>
+                  <button className="form__again" type="button" onClick={reset}>
+                    Submit another inquiry
+                  </button>
+                </motion.div>
+              </motion.div>
+
+            ) : (
+
+              /* ── Form ── */
+              <motion.form
+                key="form"
+                className="card-form"
+                id="inquiry-form"
+                onSubmit={handleSubmit}
+                noValidate
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0   }}
+                exit={{    opacity: 0, y: -8   }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <h3 className="form__title">Send an Inquiry</h3>
+                <p className="form__note">Choose a service and we'll take it from there.</p>
+
+                <div className="field">
+                  <label htmlFor="i-service">Service <b>*</b></label>
+                  <select
+                    id="i-service" name="service" required
+                    value={selService}
+                    onChange={(e) => {
+                      setSelService(e.target.value);
+                      setForm((f) => ({ ...f, category: '' }));
+                    }}
+                  >
+                    {services.map((svc) => (
+                      <option key={svc.id} value={svc.slug}>{svc.title}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {catLoading && (
+                  <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)' }}>Loading categories…</p>
+                )}
+
+                {!catLoading && Array.isArray(categories) && categories.length > 0 && (
+                  <div className="field">
+                    <label htmlFor="i-category">Category</label>
+                    <select
+                      id="i-category" name="category"
+                      value={form.category} onChange={set('category')}
+                    >
+                      <option value="">Select category</option>
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div className="field-row">
+                  <div className={`field${errors.name ? ' has-error' : ''}`}>
+                    <label htmlFor="i-name">Name <b>*</b></label>
+                    <input
+                      id="i-name" name="name" type="text"
+                      autoComplete="name" required placeholder="Rahul Shah"
+                      value={form.name} onChange={set('name')}
+                    />
+                    {errors.name && <span className="field__err">{errors.name}</span>}
+                  </div>
+                  <div className={`field${errors.phone ? ' has-error' : ''}`}>
+                    <label htmlFor="i-phone">Mobile <b>*</b></label>
+                    <input
+                      id="i-phone" name="phone" type="tel"
+                      inputMode="numeric" required placeholder="9876543210"
+                      value={form.phone} onChange={set('phone')}
+                    />
+                    {errors.phone && <span className="field__err">{errors.phone}</span>}
+                  </div>
+                </div>
+
+                <div className="field">
+                  <label htmlFor="i-email">Email</label>
+                  <input
+                    id="i-email" name="email" type="email"
+                    autoComplete="email" placeholder="optional"
+                    value={form.email} onChange={set('email')}
+                  />
+                </div>
+
+                <div className="field">
+                  <label htmlFor="i-message">Message</label>
+                  <textarea
+                    id="i-message" name="message" rows={3}
+                    placeholder="I'm looking for a 2BHK in Adajan…"
+                    value={form.message} onChange={set('message')}
+                  />
+                </div>
+
+                {serverError && (
+                  <p className="field__err" style={{ textAlign: 'center' }}>{serverError}</p>
+                )}
+
+                <button disabled={loading} className="btn btn--solid form__submit" type="submit">
+                  <span>{loading ? 'Submitting…' : 'Submit Inquiry'}</span>
+                  <span className="btn__icon">
+                    <ArrowRight size={15} strokeWidth={1.7} aria-hidden="true" />
+                  </span>
+                </button>
+              </motion.form>
+
+            )}
+          </AnimatePresence>
+        </div>
+
+      </div>
+    </section>
+  );
+}

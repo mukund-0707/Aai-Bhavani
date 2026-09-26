@@ -21,18 +21,24 @@ class FAQSerializer(serializers.ModelSerializer):
         fields = ['id', 'question', 'answer', 'order']
 
 
-# Admin serializers — include all fields
 class TestimonialAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Testimonial
-        fields = '__all__'
+        fields = ['id', 'client_name', 'photo', 'rating', 'review',
+                  'location', 'is_active', 'order']
+        read_only_fields = ['id', 'photo']
+
 
 class TeamMemberAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model  = TeamMember
-        fields = '__all__'
+        fields = ['id', 'photo', 'name', 'designation', 'description',
+                  'facebook', 'instagram', 'linkedin', 'order', 'is_active']
+        read_only_fields = ['id', 'photo']
+
 
 class FAQAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model  = FAQ
-        fields = '__all__'
+        fields = ['id', 'question', 'answer', 'order', 'is_active']
+        read_only_fields = ['id']

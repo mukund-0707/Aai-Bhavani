@@ -3,7 +3,7 @@ from apps.inquiries.models import InquiryCategory, Inquiry
 
 
 class InquiryCategorySerializer(serializers.ModelSerializer):
-    """Public — form dropdown ke liye."""
+    """Public — for the inquiry form dropdown."""
     class Meta:
         model  = InquiryCategory
         fields = ['id', 'name', 'order']
@@ -26,12 +26,12 @@ class InquirySerializer(serializers.ModelSerializer):
         fields = ['id', 'service', 'category', 'name', 'phone', 'email', 'message']
 
     def validate(self, data):
-        # Category diya hai to check karo ki woh us service se belong karti hai
+        # If a category is provided, verify it belongs to the selected service
         service  = data.get('service')
         category = data.get('category')
         if category and service and category.service_id != service.id:
             raise serializers.ValidationError(
-                {'category': 'Yeh category is service se belong nahi karti.'}
+                {'category': 'This category does not belong to the selected service.'}
             )
         return data
 
